@@ -77,32 +77,4 @@ document.getElementById('start-plan').addEventListener('click', () => {
   `;
   quickOverlay.style.display = 'flex';
 
-  document.getElementById('quick-route-cancel').onclick = () => quickOverlay.style.display = 'none';
-  document.getElementById('quick-multiday').onclick = () => {
-    quickOverlay.style.display = 'none';
-    window.location.href = "/plan.html#tour-details";
-  };
-  document.getElementById('quick-route-plan').onclick = () => {
-    const dest = document.getElementById('quick-dest').value.trim();
-    if (!dest.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)) {
-      alert("Bitte Zielkoordinaten im Format Lat,Lon eingeben!");
-      return;
-    }
-    alert("Route zum Zielpunkt wird geplant (Demo).");
-    quickOverlay.style.display = 'none';
-  };
-});
-
-// Dummy-Spot hinzufügen Funktion
-function addQuickSpot(category, lat, lng) {
-  const emoji = category === "Wasserstelle" ? "💧" :
-                category === "Rastplatz" ? "🌳" :
-                category === "Toilette" ? "🚻" :
-                category === "Cafe" ? "🍽️" : "📍";
-  const info = `${emoji} ${category}`;
-  if (typeof spots !== "undefined" && typeof map !== "undefined" && typeof spotIcon === "function") {
-    spots.push({lat, lng, info, emoji, category});
-    L.marker([lat, lng], {icon: spotIcon(emoji)}).addTo(map).bindPopup(info);
-  }
-  alert("Spot hinzugefügt!");
-}
+  document.getElementB

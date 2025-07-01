@@ -26,32 +26,4 @@ const tourList = document.getElementById('tour-list');
 
 function updateTourFeed() {
   tourList.innerHTML = '';
-  savedTours.forEach(tour => {
-    const div = document.createElement('div');
-    div.classList.add('tour-item');
-    // Profil-Link
-    const profileLink = `<a href="/profile.html?user=${encodeURIComponent(tour.creator)}" class="profile-link">${tour.creator}</a>`;
-    div.innerHTML = `
-      <strong>${tour.name}</strong><br>
-      Dauer: ${tour.days} Tage<br>
-      Erstellt von: ${profileLink}<br>
-      ${tour.multiDay ? "Mehrtägige Tour" : "Tages-Tour"}
-    `;
-    div.style.cursor = "pointer";
-    div.onclick = () => {
-      // Alte Route entfernen
-      if (window.currentTourRoute) {
-        window.map.removeLayer(window.currentTourRoute);
-      }
-      // Neue Route zeichnen
-      const route = tourRoutes[tour.id];
-      if (route) {
-        window.currentTourRoute = L.polyline(route, {color: "#2e8b57", weight: 5}).addTo(window.map);
-        window.map.fitBounds(route);
-      }
-    };
-    tourList.appendChild(div);
-  });
-}
-
-updateTourFeed();
+  savedTours.forEa
