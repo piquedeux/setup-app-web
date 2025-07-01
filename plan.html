@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>VeloMap – Tour planen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+</head>
+<body>
+
+<header><div class="title"><span class="logo">VeloMap</span><span>Planen</span></div><div>🗺 Plane deine nächste Route</div></header>
+
+<div id="map"></div>
+<div id="info">
+  <p>Hier kannst du deine Tour planen, Startpunkt wählen und Tage festlegen.</p>
+  <p><em>(Diese Funktion ist noch im Aufbau.)</em></p>
+</div>
+
+<nav>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Planen</a>
+  <a href="/profile.html">Profil</a>
+</nav>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // Karte Setup
+  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  });
+  const cycle = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+    attribution: 'Map tiles by Stamen Design, CC BY 3.0 — Map data &copy; OpenStreetMap contributors'
+  });
+
+  const map = L.map('map', {
+    center: [52.52, 13.3],
+    zoom: 11,
+    layers: [cycle]
+  });
+
+  L.control.layers({
+    "OpenStreetMap": osm,
+    "Fahrradwege (Stamen Toner Lite)": cycle
+  }).addTo(map);
+</script>
+
+</body>
+</html>
