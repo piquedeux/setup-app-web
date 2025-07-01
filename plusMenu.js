@@ -2,111 +2,107 @@
 
 const plusBtn = document.getElementById('plus-button');
 const plusMenu = document.getElementById('plus-menu');
+const quickOverlay = document.getElementById('quick-overlay');
+const quickOverlayContent = document.getElementById('quick-overlay-content');
 
+// Menü öffnen/schließen
 plusBtn.addEventListener('click', () => {
   plusMenu.style.display = plusMenu.style.display === 'flex' ? 'none' : 'flex';
 });
 
-document.getElementById('start-plan').addEventListener('click', () => {
-  alert("Route planen (noch in Arbeit)");
-  plusMenu.style.display = 'none';
+// Overlay schließen bei Klick außerhalb
+quickOverlay.addEventListener('mousedown', (e) => {
+  if (e.target === quickOverlay) {
+    quickOverlay.style.display = 'none';
+  }
 });
 
+// Schnell Spot hinzufügen Overlay
 document.getElementById('add-spot').addEventListener('click', () => {
   plusMenu.style.display = 'none';
-  showSpotOverlay();
-});
+  quickOverlayContent.innerHTML = `
+    <h4>Schnell Spot hinzufügen</h4>
+    <label for="quick-spot-category">Kategorie</label>
+    <select id="quick-spot-category" required>
+      <option value="">Bitte wählen</option>
+      <option value="Wasserstelle">💧 Wasserstelle</option>
+      <option value="Rastplatz">🌳 Rastplatz</option>
+      <option value="Toilette">🚻 Toilette</option>
+      <option value="Cafe">🍽️ Café</option>
+    </select>
+    <div class="quick-form-actions">
+      <button id="quick-spot-here" type="button">Spot hier hinzufügen</button>
+      <button id="quick-spot-manual" type="button">Manuell hinzufügen</button>
+      <button id="quick-spot-cancel" type="button" class="close-btn">Abbrechen</button>
+    </div>
+  `;
+  quickOverlay.style.display = 'flex';
 
-// Klick außerhalb Menü schließt das Menü
-document.addEventListener('click', (e) => {
-  if (!plusMenu.contains(e.target) && e.target !== plusBtn) {
-    plusMenu.style.display = 'none';
-  }
-});
-
-// Spot hinzufügen Overlay und Logik
-const spotOverlay = document.getElementById('spot-overlay');
-const spotForm = document.getElementById('spot-form');
-const mapSelectToggle = document.getElementById('map-select-toggle');
-
-let mapSelectMode = false;
-let tempMarker = null;
-
-function showSpotOverlay() {
-  spotOverlay.style.display = 'flex';
-  spotForm.reset();
-  mapSelectToggle.checked = false;
-  mapSelectMode = false;
-  if(tempMarker) {
-    map.removeLayer(tempMarker);
-    tempMarker = null;
-  }
-}
-
-document.getElementById('spot-cancel').addEventListener('click', () => {
-  spotOverlay.style.display = 'none';
-  if(tempMarker) {
-    map.removeLayer(tempMarker);
-    tempMarker = null;
-  }
-});
-
-mapSelectToggle.addEventListener('change', (e) => {
-  mapSelectMode = e.target.checked;
-  if(mapSelectMode) {
-    alert("Klicke auf die Karte, um den Spot zu setzen.");
-  }
-  if(tempMarker) {
-    map.removeLayer(tempMarker);
-    tempMarker = null;
-  }
-});
-
-map.on('click', (e) => {
-  if (mapSelectMode) {
-    if(tempMarker) map.removeLayer(tempMarker);
-    tempMarker = L.marker(e.latlng, {draggable: true}).addTo(map);
-  }
-});
-
-spotForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const category = document.getElementById('spot-category').value;
-  const name = document.getElementById('spot-name').value.trim();
-  const notes = document.getElementById('spot-notes').value.trim();
-
-  if(!category || !name) {
-    alert("Bitte Kategorie und Name angeben.");
-    return;
-  }
-
-  if(mapSelectMode && !tempMarker) {
-    alert("Bitte wähle einen Punkt auf der Karte aus.");
-    return;
-  }
-
-  const latlng = mapSelectMode ? tempMarker.getLatLng() : map.getCenter();
-
-  const newSpot = {
-    lat: latlng.lat,
-    lng: latlng.lng,
-    info: `${category} – ${name}${notes ? "<br>" + notes : ""}`,
-    emoji: category === "Wasserstelle" ? "💧" :
-           category === "Rastplatz" ? "🌳" :
-           category === "Toilette" ? "🚻" :
-           category === "Cafe" ? "🍽️" : "📍",
-    category
+  document.getElementById('quick-spot-cancel').onclick = () => quickOverlay.style.display = 'none';
+  document.getElementById('quick-spot-manual').onclick = () => {
+    quickOverlay.style.display = 'none';
+    window.location.href = "/plan.html#spot-details";
   };
-  spots.push(newSpot);
-
-  // Neuen Marker hinzufügen
-  newSpot.marker = L.marker([newSpot.lat, newSpot.lng], {icon: spotIcon(newSpot.emoji)}).addTo(map).bindPopup(newSpot.info);
-
-  alert("Spot hinzugefügt!");
-  spotOverlay.style.display = 'none';
-
-  if(tempMarker) {
-    map.removeLayer(tempMarker);
-    tempMarker = null;
-  }
+  document.getElementById('quick-spot-here').onclick = () => {
+    const category = document.getElementById('quick-spot-category').value;
+    if (!category) {
+      alert("Bitte eine Kategorie wählen!");
+      return;
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        addQuickSpot(category, pos.coords.latitude, pos.coords.longitude);
+      }, function() {
+        alert("Standort nicht verfügbar.");
+      });
+    } else {
+      alert("Standort nicht verfügbar.");
+    }
+    quickOverlay.style.display = 'none';
+  };
 });
+
+// Schnell Route planen Overlay
+document.getElementById('start-plan').addEventListener('click', () => {
+  plusMenu.style.display = 'none';
+  quickOverlayContent.innerHTML = `
+    <h4>Schnell Route planen</h4>
+    <label for="quick-dest">Zielpunkt (Lat,Lon)</label>
+    <input id="quick-dest" type="text" placeholder="z.B. 53.9,14.1" required>
+    <div class="quick-form-actions">
+      <button id="quick-route-plan" type="button">Route planen</button>
+      <button id="quick-multiday" type="button">Mehrtagestour planen</button>
+      <button id="quick-route-cancel" type="button" class="close-btn">Abbrechen</button>
+    </div>
+  `;
+  quickOverlay.style.display = 'flex';
+
+  document.getElementById('quick-route-cancel').onclick = () => quickOverlay.style.display = 'none';
+  document.getElementById('quick-multiday').onclick = () => {
+    quickOverlay.style.display = 'none';
+    window.location.href = "/plan.html#tour-details";
+  };
+  document.getElementById('quick-route-plan').onclick = () => {
+    const dest = document.getElementById('quick-dest').value.trim();
+    if (!dest.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)) {
+      alert("Bitte Zielkoordinaten im Format Lat,Lon eingeben!");
+      return;
+    }
+    alert("Route zum Zielpunkt wird geplant (Demo).");
+    quickOverlay.style.display = 'none';
+  };
+});
+
+// Dummy-Spot hinzufügen Funktion
+function addQuickSpot(category, lat, lng) {
+  const emoji = category === "Wasserstelle" ? "💧" :
+                category === "Rastplatz" ? "🌳" :
+                category === "Toilette" ? "🚻" :
+                category === "Cafe" ? "🍽️" : "📍";
+  const info = `${emoji} ${category}`;
+  if (typeof spots !== "undefined" && typeof map !== "undefined" && typeof spotIcon === "function") {
+    spots.push({lat, lng, info, emoji, category});
+    L.marker([lat, lng], {icon: spotIcon(emoji)}).addTo(map).bindPopup(info);
+  }
+  alert("Spot hinzugefügt!");
+}

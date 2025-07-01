@@ -14,6 +14,8 @@ body {
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-y: auto;
 }
 
 header {
@@ -70,21 +72,45 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 0.625rem;
+  padding: 0 0.5rem;
+}
+
+#plan-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5em;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#map-container-start {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  margin-bottom: 1em;
+  position: relative;
 }
 
 #map-container {
-  width: 90%;
-  aspect-ratio: 1 / 1;
+  height: 400px;
+  width: 100%;
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 0 0.75rem rgba(0, 0, 0, 0.1);
-  margin: 0.625rem auto 1.25rem auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #map {
   width: 100%;
   height: 100%;
+  min-height: 0;
 }
 
 #tour-feed {
@@ -108,17 +134,12 @@ main {
 }
 
 .tour-item {
-  border-bottom: 1px solid var(--color-text);
-  padding: 0.375rem 0;
+  border-bottom: none;
+  margin-bottom: 0.5em;
 }
 
 .tour-item:last-child {
   border-bottom: none;
-}
-
-.profile {
-  font-weight: 700;
-  color: var(--color-text);
 }
 
 #plus-button {
@@ -194,44 +215,318 @@ main {
   z-index: 20000;
 }
 
-#spot-form {
-  background: var(--color-bg);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  width: 20rem;
-  max-width: 90vw;
-  box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  color: var(--color-text);
-}
-
-#spot-form label {
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-#spot-form input[type="text"],
-#spot-form textarea,
-#spot-form select {
-  width: 95%;
-  padding: 0.5rem;
-  border: 0.0625rem solid var(--color-text);
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: var(--color-text);
-  background: var(--color-bg);
-  resize: vertical;
-}
-
-#spot-form textarea {
-  min-height: 3.75rem;
-}
-
 #map-select-mode {
   margin-top: 0.375rem;
   font-size: 0.9rem;
   font-style: italic;
   color: var(--color-text);
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2em;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.profile-main {
+  flex: 1;
+}
+
+.profile-main h2 {
+  margin: 0 0 0.2em 0;
+  font-size: 1.5em;
+}
+
+.profile-details {
+  margin: 0 0 1.2em 0;
+  color: #444;
+  font-size: 1em;
+}
+
+.profile-details dt {
+  font-weight: bold;
+  margin-top: 0.6em;
+  color: #2e8b57;
+  font-size: 1em;
+}
+
+.profile-details dd {
+  margin: 0 0 0.3em 0.8em;
+}
+
+.pinned-tours {
+  margin-bottom: 0.5em;
+}
+
+.pinned-tours h3 {
+  margin-bottom: 0.3em;
+  color: #2e8b57;
+  font-size: 1.1em;
+}
+
+.pinned-tours ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pinned-tours li {
+  background: #f0f8f5;
+  border-radius: 8px;
+  padding: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.tour-meta {
+  color: #888;
+  font-size: 0.95em;
+  margin-left: 0.5em;
+}
+
+.spot-counter {
+  width: 100%;
+  margin: 0 auto 5.5rem auto;
+  font-size: 1.1em;
+  color: #2e8b57;
+  padding-right: 1.5em;
+  font-family: "Kosugi Maru", Arial, sans-serif;
+}
+
+.settings-toggle-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1em;
+}
+
+.settings-btn {
+  cursor: pointer;
+  font-size: 2em;
+  user-select: none;
+  padding: 0 0.5em;
+  background: none;
+  border: none;
+}
+
+.settings-toggle:checked + .settings-btn + .settings-menu {
+  display: flex;
+}
+
+.settings-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 2.2em;
+  right: 1.5em;
+  background: #fff;
+  border: 1px solid #ccc;
+  min-width: 8em;
+  z-index: 10;
+}
+
+.settings-item {
+  padding: 0.5em 1em;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+#forms-section details {
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 0.5rem rgba(0,0,0,0.08);
+  margin-bottom: 1em;
+  padding: 0.8em 1em 0.5em 1em;
+  transition: box-shadow 0.2s;
+}
+
+#forms-section summary {
+  font-weight: bold;
+  outline: none;
+  user-select: none;
+}
+
+#forms-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  margin-top: 0.5em;
+}
+
+#forms-section label {
+  font-weight: 600;
+  font-size: 1em;
+  display: block;
+}
+
+#forms-section input[type="text"] {
+  width: 90%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  margin-top: 0.2em;
+}
+
+.plan-form-actions {
+  display: flex;
+  gap: 0.5em;
+}
+
+.plan-form-actions button {
+  padding: 0.5em 1em;
+  border-radius: 0.4em;
+  border: none;
+  background: #2e8b57;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.diary-section {
+  width: 100%;
+  padding: 1em;
+  margin-bottom: 4em;
+}
+
+/* Eigene Styles für Quick-Overlay und Quick-Form */
+.quick-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 30000;
+  overflow: auto;
+}
+
+.quick-overlay[style*="display: flex"] {
+  display: flex !important;
+}
+
+.quick-form-container {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem 1.2rem;
+  width: 100%;
+  max-width: 22rem;
+  box-sizing: border-box;
+  box-shadow: 0 0 1.5rem rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+  color: #222;
+  margin: 2vw;
+}
+
+.quick-form-container h4 {
+  margin-top: 0;
+  font-size: 1.25em;
+}
+
+.quick-form-container label {
+  font-weight: 700;
+  font-size: 1rem;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+.quick-form-container input[type="text"],
+.quick-form-container select,
+.quick-form-container textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 0.375rem;
+  font-size: 1em;
+  color: #222;
+  background: #fff;
+  margin-bottom: 1em;
+}
+
+.quick-form-actions {
+  display: flex;
+  gap: 0.5em;
+}
+
+.quick-form-actions button {
+  padding: 0.5em 1em;
+  border-radius: 0.4em;
+  border: none;
+  background: #2e8b57;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.6em;
+}
+
+.quick-form-actions .close-btn {
+  background: #ccc;
+  color: #222;
+}
+
+.tour-details {
+  background: none;
+  border-radius: 0;
+  margin: 0.5em 0 0.5em 0;
+  padding: 0.7em 0 0.7em 0;
+  font-size: 0.98em;
+  border: none;
+  box-shadow: none;
+}
+.tour-day {
+  margin-bottom: 0.5em;
+}
+.tour-item button {
+  font-weight: bold;
+}
+
+.profile-link {
+  color: #2e8b57;
+  text-decoration: underline;
+}
+
+.leaflet-control-attribution {
+  font-size: 0.75em !important;
+  opacity: 0.7;
+  right: 0.5em !important;
+  left: auto !important;
+  bottom: 0.2em !important;
+}
+
+.leaflet-control-attribution a[href*="leafletjs.com"] {
+  display: none !important;
+}
+
+
+#map-grow-btn {
+  margin-top: -0.7em;
+ text-align: center;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+
+#map-container.grown {
+  height: calc(75vh) !important;
 }

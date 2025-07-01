@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VeloMap App</title>
+  <title>App frame</title>
   <style>
     body {
       margin: 0;
@@ -28,6 +28,12 @@
       border: none;
     }
   </style>
+  <script>
+    // Redirect mobile users to start.html
+    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = "start.html";
+    }
+  </script>
 </head>
 <body>
   <div class="phone-frame">
@@ -36,7 +42,7 @@
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const page = params.get("page") || "start";
+    const page = params.get("page") || "loader";
     document.getElementById("app-frame").src = `${page}.html`;
   </script>
 </body>

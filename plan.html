@@ -3,49 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VeloMap – Tour planen</title>
+  <title>GoCycle – Tour planen</title>
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
-
 </head>
 <body>
 
-<header><div class="title"><span class="logo">VeloMap</span><span>Planen</span></div><div>🗺 Plane deine nächste Route</div></header>
+<header>
+  <div class="title">
+    <span class="logo">GoCycle</span>
+    <span>Planen</span>
+  </div>
+  <div>🗺 Plane deine nächste Route</div>
+</header>
 
-<div id="map"></div>
-<div id="info">
-  <p>Hier kannst du deine Tour planen, Startpunkt wählen und Tage festlegen.</p>
-  <p><em>(Diese Funktion ist noch im Aufbau.)</em></p>
+<main>
+  <div id="plan-container">
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
+
+    <div id="map-grow-btn" title="Karte nach unten ausklappen">⏬</div>
+    
+    <section id="forms-section" style="width:100%;max-width:500px;margin:0 auto;">
+      <details id="tour-details" style="margin-bottom:1em;">
+        <summary style="font-size:1.1em;cursor:pointer;">Neue Tour planen</summary>
+       <section id="route-plan-section">
+  <form id="tour-form">
+    <label>Routenname:
+      <input type="text" id="route-name" placeholder="z.B. Berlin nach Potsdam" required>
+    </label>
+    <!-- Beispiel für Startpunkt -->
+<label>Startpunkt:
+  <input type="text" id="start-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
+  <div class="suggestions" id="start-suggestions"></div>
+  <button type="button" id="start-map-pick">🗺️</button>
+  <button type="button" id="start-geolocate">📍</button>
+  <button type="button" id="start-geocode-btn">Adresse suchen</button>
+</label>
+<!-- Analog für Ziel und Zwischenstopps -->
+<label>Ziel:
+  <input type="text" id="end-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
+  <div class="suggestions" id="end-suggestions"></div>
+  <button type="button" id="end-map-pick">🗺️</button>
+  <button type="button" id="end-geolocate">📍</button>
+  <button type="button" id="end-geocode-btn">Adresse suchen</button>
+</label>
+<label>Zwischenstopps:
+  <input type="text" id="waypoint-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
+  <div class="suggestions" id="waypoint-suggestions"></div>
+  <button type="button" id="waypoint-map-pick">🗺️</button>
+  <button type="button" id="waypoint-geolocate">📍</button>
+  <button type="button" id="waypoint-geocode-btn">Adresse suchen</button>
+  <ul id="waypoint-list"></ul>
+</label>
+    <button type="button" id="route-plan-btn">Route planen</button>
+    <button type="button" id="route-save-btn">Route speichern</button>
+    <!-- Beispiel für Route -->
+<button type="button" id="route-cancel-btn">Abbrechen</button>
+  </form>
+</section>
+      </details>
+
+
+      <details id="spot-details">
+        <summary style="font-size:1.1em;cursor:pointer;">Neuen Spot hinzufügen</summary>
+        <section id="spot-add-section">
+  <form id="spot-form">
+    <label>Name: <input type="text" id="spot-name" required></label>
+    <label>Typ:
+      <select id="spot-type">
+        <option value="spot">Spot</option>
+        <option value="sleep">Schlafplatz</option>
+      </select>
+    </label>
+    <button type="button" id="spot-map-pick">🗺️</button>
+    <button type="button" id="spot-geolocate">📍</button>
+    <input type="text" id="spot-coord" placeholder="Koordinaten" readonly required>
+    <button type="submit">Hinzufügen</button>
+    <!-- Beispiel für Spot -->
+<button type="button" id="spot-cancel-btn">Abbrechen</button>
+  </form>
+</section>
+      </details>
+    </section>
+    <div id="diary-section" class="diary-section">
+      <section>
+  <h3>Meine Touren</h3>
+  <ul id="tour-list"></ul>
+  <h3>Meine Spots</h3>
+  <ul id="spot-list"></ul>
+  <h3>Meine Schlafplätze</h3>
+  <ul id="sleep-list"></ul>
+</section>
+  </div>
 </div>
+</main>
+
+
 
 <nav>
-  <a href="/setup-app-web/start.html">Start</a>
-  <a href="/setup-app-web/plan.html">Planen</a>
-  <a href="/setup-app-web/profile.html">Profil</a>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html" class="active">Planen</a>
+  <a href="/profile.html">Profil</a>
 </nav>
 
+
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-  // Karte Setup
-  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  });
-  const cycle = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-    attribution: 'Map tiles by Stamen Design, CC BY 3.0 — Map data &copy; OpenStreetMap contributors'
-  });
-
-  const map = L.map('map', {
-    center: [52.52, 13.3],
-    zoom: 11,
-    layers: [cycle]
-  });
-
-  L.control.layers({
-    "OpenStreetMap": osm,
-    "Fahrradwege (Stamen Toner Lite)": cycle
-  }).addTo(map);
-</script>
-
+<script src="plan.js"></script>
 </body>
 </html>

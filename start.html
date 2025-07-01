@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VeloMap – Startseite</title>
+  <title>GoCycle – Startseite</title>
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<header><div class="title"><span class="logo">VeloMap</span> <span>Startseite</span></div><div>🚴 Deine aktuelle Übersicht und gespeicherte Touren</div></header>
+<header><div class="title"><span class="logo">GoCycle</span> <span>Startseite</span></div><div>🚴 Deine aktuelle Übersicht und gespeicherte Touren</div></header>
 
-<div id="map-container">
+<div id="map-container-start">
   <div id="map"></div>
 </div>
 
 <div id="tour-feed">
-  <h2>Gespeicherte Touren</h2>
+  <h2>Neue Touren</h2>
   <div id="tour-list"></div>
 </div>
 
@@ -27,30 +27,17 @@
   <button id="add-spot">📍 Spot hinzufügen</button>
 </div>
 
-<!-- Overlay Spot hinzufügen -->
-<div id="spot-overlay">
-  <form id="spot-form">
-    <label for="spot-category">Kategorie</label>
-    <select id="spot-category" required>
-      <option value="">Bitte wählen</option>
-      <option value="Wasserstelle">💧 Wasserstelle</option>
-      <option value="Rastplatz">🌳 Rastplatz</option>
-      <option value="Toilette">🚻 Toilette</option>
-      <option value="Cafe">🍽️ Café</option>
-    </select>
-    <label for="spot-name">Name</label>
-    <input type="text" id="spot-name" placeholder="Name des Spots" required />
-    <label for="spot-notes">Notizen</label>
-    <textarea id="spot-notes" placeholder="Notizen zum Spot"></textarea>
-    <button type="submit">Spot speichern</button>
-    <button type="button" id="spot-cancel">Abbrechen</button>
-  </form>
+<!-- Neues Overlay für Schnellfunktionen -->
+<div id="quick-overlay" class="quick-overlay" style="display:none;">
+  <div class="quick-form-container" id="quick-overlay-content">
+    <!-- Inhalt wird per JS gesetzt -->
+  </div>
 </div>
 
 <nav>
-  <a href="/setup-app-web/start.html">Start</a>
-  <a href="/setup-app-web/plan.html">Planen</a>
-  <a href="/setup-app-web/profile.html">Profil</a>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Planen</a>
+  <a href="/profile.html">Profil</a>
 </nav>
 
 

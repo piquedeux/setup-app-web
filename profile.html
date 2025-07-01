@@ -3,33 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VeloMap – Profil</title>
+  <title>GoCycle – Profil</title>
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<header><div class="title"><span class="logo">VeloMap</span><span>Profil</span></div><div>👤 Deine Daten und Einstellungen</div></header>
+<header>
+  <div class="header-bar">
+    <div class="title">
+      <span class="logo">GoCycle</span>
+      <span>Profil</span>
+    </div>
+  </div>
+  <div>👤 Deine Daten und Einstellungen</div>
+</header>
+
+<div class="settings-toggle-container">
+  <input type="checkbox" id="settings-toggle" class="settings-toggle" hidden>
+  <label for="settings-toggle" class="settings-btn" title="Einstellungen öffnen">&#8226;&#8226;&#8226;</label>
+  <div class="settings-menu">
+    <button class="settings-item">Einstellungen</button>
+    <button class="settings-item">Statistiken</button>
+    <button class="settings-item">Hilfe</button>
+    <button class="settings-item">Abmelden</button>
+  </div>
+</div>
 
 <main>
-  <h2>Moritz</h2>
-  <p>Willkommen in deinem Profilbereich. Hier kannst du deine Touren verwalten und persönliche Einstellungen vornehmen.</p>
+  <div class="profile-section">
+    <img class="profile-pic" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild Moritz" />
+    <div class="profile-main">
+      <h2>Moritz</h2>
+      <dl class="profile-details">
+        <dt>Fahrrad</dt>
+        <dd>Gravelbike, 28 Zoll</dd>
+        <dt>Fitness-Level</dt>
+        <dd>Fortgeschritten (Ø 14–16 km/h)</dd>
+        <dt>Schlafgewohnheit</dt>
+        <dd>Camping & Pensionen</dd>
+        <dt>Lieblingsregion</dt>
+        <dd>Brandenburg & Ostsee</dd>
+      </dl>
+      <section class="pinned-tours">
+        <h3>📌 Angepinnte Touren</h3>
+        <ul>
+          <li>🚴‍♂️ Berlin → Ostsee <span class="tour-meta">(5 Tage, 15 km/h)</span></li>
+          <li>🌲 Rundkurs Spreewald <span class="tour-meta">(3 Tage, 13 km/h)</span></li>
+          <li>🏞️ Brandenburg Seenplatte <span class="tour-meta">(4 Tage, 14 km/h)</span></li>
+        </ul>
+      </section>
+    </div>
+      <div class="spot-counter">
+  <span>🟢 Spots hinzugefügt: <strong>12</strong></span>
+</div>
 
-  <h3>Gespeicherte Touren</h3>
-  <ul>
-    <li>Tour Berlin → Ostsee (5 Tage, 15 km/h)</li>
-    <li>Rundkurs Spreewald (3 Tage, 13 km/h)</li>
-    <li>Brandenburg Seenplatte (4 Tage, 14 km/h)</li>
-  </ul>
+  </div>
 
-  <h3>Einstellungen</h3>
-  <p><em>Hier könnten zukünftige Einstellungen und Profileditoren eingebaut werden.</em></p>
+
 </main>
 
+
+
 <nav>
-  <a href="/setup-app-web/start.html">Start</a>
-  <a href="/setup-app-web/plan.html">Planen</a>
-  <a href="/setup-app-web/profile.html">Profil</a>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Planen</a>
+  <a href="/profile.html" class="active">Profil</a>
 </nav>
 
 </body>
