@@ -1,9 +1,7 @@
-/* styles.css */
-
 :root {
-  --color-bg: #fff;       /* Weißer Hintergrund */
-  --color-text: #000;     /* Schwarz für Text */
-  --color-primary: #000;  /* Primär auch schwarz */
+  --color-bg: #fff;
+  --color-text: #000;
+  --color-primary: #000;
 }
 
 body {
@@ -19,14 +17,14 @@ body {
 }
 
 header {
-  font-size: 0.6rem;
+  font-size: 0.8em;
   text-align: left;
-  padding: 20px;
+  padding: 1.25em;
   color: var(--color-text);
   background: var(--color-bg);
   flex: 0 0 auto;
   user-select: none;
-  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -0.0625em 0.5em rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -36,7 +34,7 @@ header {
 }
 
 .logo {
- font-size: 1.6rem;
+  font-size: 2em;
   font-family: "Kosugi Maru", sans-serif;
 }
 
@@ -45,25 +43,25 @@ nav {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 56px;
+  height: 3.5em;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 1.25em;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   font-family: 'Kosugi Maru', sans-serif;
-  font-size: 18px;
+  font-size: 1.125em;
   color: #000;
-  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -0.0625em 0.5em rgba(0, 0, 0, 0.1);
   z-index: 10000;
 }
 
 nav a {
   color: #000;
   text-decoration: none;
-  padding: 10px 12px;
+  padding: 0.625em 0.75em;
 }
 
 main {
@@ -72,18 +70,18 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 0.625em;
+  padding-right: 0.625em;
 }
 
 #map-container {
-  width: 90vw;
-  max-width: 600px;
+  width: 100%;
+  max-width: 37.5em;
   aspect-ratio: 1 / 1;
-  border-radius: 16px;
+  border-radius: 1em;
   overflow: hidden;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  margin: 10px auto 20px auto;
+  box-shadow: 0 0 0.75em rgba(0,0,0,0.1);
+  margin: 0.625em auto 1.25em auto;
 }
 
 #map {
@@ -92,31 +90,29 @@ main {
 }
 
 #tour-feed {
-  width: 90vw;
-  max-width: 600px;
+  width: 90%;
   background: var(--color-bg);
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  padding: 12px;
-  max-height: 200px;
+  border-radius: 0.75em;
+  box-shadow: 0 0 0.5em rgba(0,0,0,0.1);
+  padding: 0.75em;
+  max-height: 12.5em;
   overflow-y: auto;
-  font-size: 14px;
+  font-size: 0.875em;
   color: var(--color-text);
-  margin: 0 auto 30px auto;
+  margin: 0 auto 1.875em auto;
 }
 
 #tour-feed h2 {
   margin-top: 0;
-
-  font-size: 1.2rem;
+  font-size: 1.2em;
   border-bottom: 1px solid #000;
-  padding-bottom: 6px;
+  padding-bottom: 0.375em;
   color: var(--color-text);
 }
 
 .tour-item {
   border-bottom: 1px solid #000;
-  padding: 6px 0;
+  padding: 0.375em 0;
 }
 
 .tour-item:last-child {
@@ -128,20 +124,19 @@ main {
   color: var(--color-text);
 }
 
-/* Plus-Button */
 #plus-button {
   position: fixed;
-  bottom: 60px;
-  right: 30px;
-  width: 56px;
-  height: 56px;
+  bottom: 3em;
+  right: 0.5em;
+  width: 2em;
+  height: 2em;
   background: var(--color-text);
   border-radius: 50%;
-  font-size: 36px;
+  font-size: 2.25em;
   color: var(--color-bg);
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 0.25em 0.5em rgba(0,0,0,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,30 +153,30 @@ main {
 
 #plus-menu {
   position: fixed;
-  bottom: 90px;
-  right: 30px;
+  bottom: 5em;
+  right: 1.875em;
   background: var(--color-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  padding: 8px 0;
+  border-radius: 0.75em;
+  box-shadow: 0 0.25em 0.75em rgba(0,0,0,0.2);
+  padding: 0.5em 0;
   display: none;
   flex-direction: column;
   z-index: 10000;
-  width: 180px;
+  width: 11.25em;
 }
 
 #plus-menu button {
   background: none;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 0.625em 1.25em;
+  font-size: 1em;
   color: var(--color-text);
   cursor: pointer;
   width: 100%;
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625em;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -192,7 +187,6 @@ main {
   outline: none;
 }
 
-/* Overlay Spot hinzufügen */
 #spot-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -205,41 +199,42 @@ main {
 
 #spot-form {
   background: var(--color-bg);
-  border-radius: 12px;
-  padding: 20px;
-  width: 320px;
+  border-radius: 0.75em;
+  padding: 1.25em;
+  width: 20em;
   max-width: 90vw;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  box-shadow: 0 0 1.25em rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75em;
   color: var(--color-text);
 }
 
 #spot-form label {
   font-weight: 700;
+  font-size: 1em;
 }
 
 #spot-form input[type="text"],
 #spot-form textarea,
 #spot-form select {
   width: 95%;
-  padding: 8px;
-  border: 1px solid #000;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.5em;
+  border: 0.0625em solid #000;
+  border-radius: 0.375em;
+  font-size: 0.875em;
   color: var(--color-text);
   background: var(--color-bg);
   resize: vertical;
 }
 
 #spot-form textarea {
-  min-height: 60px;
+  min-height: 3.75em;
 }
 
 #map-select-mode {
-  margin-top: 6px;
-  font-size: 0.9rem;
+  margin-top: 0.375em;
+  font-size: 0.9em;
   font-style: italic;
   color: var(--color-text);
 }
