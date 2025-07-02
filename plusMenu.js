@@ -93,16 +93,21 @@ document.getElementById('start-plan').addEventListener('click', () => {
   };
 });
 
-// Dummy-Spot hinzufügen Funktion
 function addQuickSpot(category, lat, lng) {
   const emoji = category === "Wasserstelle" ? "💧" :
                 category === "Rastplatz" ? "🌳" :
                 category === "Toilette" ? "🚻" :
-                category === "Cafe" ? "🍽️" : "📍";
+                category === "Kneipe" ? "🍺" :
+                category === "Krankenhaus" ? "🏥" :
+                category === "Restaurant" ? "🍽️" :
+                category === "Werkstatt" ? "🔧" :
+                category === "Post" ? "📮" :
+                category === "Cafe" ? "☕️" : "📍";
   const info = `${emoji} ${category}`;
   if (typeof spots !== "undefined" && typeof map !== "undefined" && typeof spotIcon === "function") {
     spots.push({lat, lng, info, emoji, category});
-    L.marker([lat, lng], {icon: spotIcon(emoji)}).addTo(map).bindPopup(info);
+    const marker = L.marker([lat, lng], {icon: spotIcon(emoji)}).addTo(map).bindPopup(info);
+    map.setView([lat, lng], 16);
+    marker.openPopup();
   }
-  alert("Spot hinzugefügt!");
 }
