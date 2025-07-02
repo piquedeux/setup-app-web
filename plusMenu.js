@@ -24,11 +24,16 @@ document.getElementById('add-spot').addEventListener('click', () => {
     <h4>Schnell Spot hinzufügen</h4>
     <label for="quick-spot-category">Kategorie</label>
     <select id="quick-spot-category" required>
-      <option value="">Bitte wählen</option>
-      <option value="Wasserstelle">💧 Wasserstelle</option>
-      <option value="Rastplatz">🌳 Rastplatz</option>
-      <option value="Toilette">🚻 Toilette</option>
-      <option value="Cafe">🍽️ Café</option>
+<option value="">Bitte wählen</option>
+<option value="Wasserstelle">💧 Wasserstelle</option>
+<option value="Rastplatz">🌳 Rastplatz</option>
+<option value="Toilette">🚻 Toilette</option>
+<option value="Kneipe">🍺 Kneipe</option>
+<option value="Krankenhaus">🏥 Krankenhaus</option>
+<option value="Restaurant">🍽️ Restaurant</option>
+<option value="Werkstatt">🔧 Werkstatt</option>
+<option value="Post">📮 Post</option>
+<option value="Cafe">☕️ Café</option>
     </select>
     <div class="quick-form-actions">
       <button id="quick-spot-here" type="button">Spot hier hinzufügen</button>
