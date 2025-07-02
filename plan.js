@@ -567,7 +567,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
       stats: summary
     };
     // Zeichne Route in Orange
-    const poly = L.polyline(coords, {color: "orange", weight: 3}).addTo(map);
+    const poly = L.polyline(coords, {color: "black", weight: 3}).addTo(map);
     lastPlannedMarkers.push(poly);
     // Start Marker 🐥
     if (coords.length > 0) {
