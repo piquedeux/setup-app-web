@@ -537,7 +537,10 @@ document.getElementById('route-plan-btn').onclick = async function() {
     if (s) endCoords = s.coord;
     else endCoords = await geocodeAddress(endVal);
   }
-  if (!startCoords || !endCoords) return alert("Start oder Ziel ungültig!");
+  if (!startCoords || !endCoords) {
+    alert("Start oder Ziel ungültig!");
+    return;
+  }
 
   // ORS-Request
   const apiKey = '5b3ce3597851110001cf6248263492386e3d40628c7dbf37a20f27f2';
@@ -548,12 +551,18 @@ document.getElementById('route-plan-btn').onclick = async function() {
   ];
   const url = `https://api.openrouteservice.org/v2/directions/cycling-regular/geojson?api_key=${apiKey}`;
   const body = { coordinates };
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(body)
-  });
-  const data = await response.json();
+  let response, data;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    });
+    data = await response.json();
+  } catch (err) {
+    alert("Route konnte nicht geplant werden (Netzwerkfehler oder Server nicht erreichbar).");
+    return;
+  }
   clearLastPlannedMarkers();
   if (data && data.features && data.features[0]) {
     const coords = data.features[0].geometry.coordinates.map(c => [c[1], c[0]]);
@@ -594,7 +603,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
     }
     map.fitBounds(coords);
   } else {
-    alert("Keine Route gefunden!");
+    alert("Route konnte nicht geplant werden! Bitte überprüfe Start, Ziel und Zwischenstopps.");
   }
 };
 
@@ -610,6 +619,7 @@ document.getElementById('route-save-btn').onclick = function() {
   clearLastPlannedMarkers();
   document.getElementById('waypoint-list').innerHTML = '';
   routeWaypoints = [];
+  document.getElementById('route-save-btn').disabled = true;
 };
 
 // --- Route und Spot Eingaben zurücksetzen ---

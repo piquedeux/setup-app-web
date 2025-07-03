@@ -96,20 +96,6 @@ riders.forEach(rider => {
   rider.marker = L.marker(rider.pos, {icon: riderIcon(rider.color)}).addTo(map);
 });
 
-// Dummy Routen für drei Fahrer
-const riderRoutes = {
-  'Moritz': [
-    [52.52, 13.4], [52.54, 13.41], [52.56, 13.42], [52.58, 13.43], [52.60, 13.44]
-  ],
-  'Anna': [
-    [52.53, 13.35], [52.55, 13.36], [52.57, 13.37], [52.59, 13.38], [52.61, 13.39]
-  ],
-  'Tom': [
-    [52.51, 13.38], [52.53, 13.39], [52.55, 13.40], [52.57, 13.41], [52.59, 13.42]
-  ]
-};
-let currentRiderRoute = null;
-
 // Fahrer Popup mit Route anzeigen
 riders.forEach(rider => {
   rider.marker.on('click', () => {
@@ -145,9 +131,9 @@ let savedTours = [
     creator: "Moritz",
     multiDay: true,
     // Berlin Hbf
-    startCoords: [52.52508, 13.3694],
+    startCoords: [52.52508, 13.3694], // [lat, lng]
     // Rostock Hbf
-    endCoords: [54.0887, 12.1405]
+    endCoords: [54.0887, 12.1405]     // [lat, lng]
   },
   {
     id: 2,
@@ -359,8 +345,8 @@ async function updateTourFeed() {
       }
 
       const coordinates = [
-        [startCoords[1], startCoords[0]],
-        [endCoords[1], endCoords[0]]
+        [startCoords[1], startCoords[0]], // [lng, lat]
+        [endCoords[1], endCoords[0]]      // [lng, lat]
       ];
       const url = `https://api.openrouteservice.org/v2/directions/cycling-regular/geojson?api_key=${ORS_API_KEY}`;
       const body = { coordinates };
