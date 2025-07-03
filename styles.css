@@ -508,15 +508,15 @@ main {
 }
 
 .leaflet-control-attribution {
-  font-size: 0.75em !important;
+  font-size: 0.75em;
   opacity: 0.7;
-  right: 0.5em !important;
-  left: auto !important;
-  bottom: 0.2em !important;
+  right: 0.5em;
+  left: auto;
+  bottom: 0.2em;
 }
 
 .leaflet-control-attribution a[href*="leafletjs.com"] {
-  display: none !important;
+  display: none;
 }
 
 
@@ -529,5 +529,5 @@ main {
 
 
 #map-container.grown {
-  height: calc(75vh) !important;
+  height: calc(70vh);
 }
