@@ -7,31 +7,93 @@
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    #map-container-start {
+      width: 100%;
+      max-width: 900px;
+      margin: 1.5em auto 1em auto;
+      aspect-ratio: 16/9;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #e0e0e0;
+      min-height: 250px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+    }
+
+    #tour-feed, #friend-log {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 2em auto;
+      background: #fff;
+      border-radius: 0.75rem;
+      box-shadow: 0 0 0.5rem rgba(0,0,0,0.08);
+      padding: 1rem 1.25rem;
+      font-size: 0.98rem;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    #tour-feed h2, #friend-log h2 {
+      font-size: 1.2rem;
+      border-bottom: 1px solid #2e8b57;
+      padding-bottom: 0.375rem;
+      margin-top: 0;
+    }
+
+    .tour-item {
+      background: #f8f8f8;
+      border-radius: 0.6rem;
+      padding: 0.7rem 1rem;
+      margin-bottom: 0.5em;
+      box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,0.03);
+    }
+
+    .tour-item button {
+      margin-right: 0.5em;
+      margin-top: 0.3em;
+    }
+
+    #log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+  </style>
 </head>
 <body>
 
-<header><div class="title"><span class="logo">GoCycle</span> <span>Startseite</span></div><div>🚴 Deine aktuelle Übersicht und gespeicherte Touren</div></header>
+<header>
+  <div class="title"><span class="logo">GoCycle</span> <span>Startseite</span></div>
+  <div>🚴 Deine aktuelle Übersicht und gespeicherte Touren</div>
+</header>
 
-<div id="map-container-start">
-  <div id="map"></div>
-</div>
-  
 <main>
-<section id="tour-feed" class="feed-box">
-  <h2>Neue Touren</h2>
-  <div id="tour-list"></div>
-</section>
+  <div id="map-container-start">
+    <div id="map"></div>
+  </div>
 
-<!-- Friend Log Bereich -->
-<section id="friend-log">
-  <h2>Friends Log</h2>
-  <div id="log-list"></div>
-  <button id="load-more-logs">Mehr anzeigen</button>
-</section>
+  <section id="tour-feed">
+    <h2>Neue Touren</h2>
+    <div id="tour-list"></div>
+  </section>
 
-
+  <section id="friend-log">
+    <h2>Friends Log</h2>
+    <div id="log-list"></div>
+    <button id="load-more-logs">Mehr anzeigen</button>
+  </section>
 </main>
-  
+
 <button id="plus-button" title="Menü öffnen">＋</button>
 <div id="plus-menu">
   <button id="start-plan">🗺 Route planen</button>
@@ -40,11 +102,8 @@
   <button id="add-log">📝 Log erstellen</button>
 </div>
 
-<!-- Neues Overlay für Schnellfunktionen -->
 <div id="quick-overlay" class="quick-overlay" style="display:none;">
-  <div class="quick-form-container" id="quick-overlay-content">
-    <!-- Inhalt wird per JS gesetzt -->
-  </div>
+  <div class="quick-form-container" id="quick-overlay-content"></div>
 </div>
 
 <nav>
@@ -52,7 +111,6 @@
   <a href="/setup-app-web/plan.html">Planen</a>
   <a href="/setup-app-web/profile.html">Profil</a>
 </nav>
-
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="tours.js"></script>
