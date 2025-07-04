@@ -73,7 +73,9 @@ main {
   align-items: center;
   justify-content: flex-start;
   padding: 0 0.5rem;
+  padding-bottom: 4.5rem;
 }
+
 
 #plan-container {
   display: flex;
