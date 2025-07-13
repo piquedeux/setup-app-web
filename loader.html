@@ -9,12 +9,28 @@
     html, body {
       margin: 0;
       background: white;
-      font-family: 'Kosugi Maru', sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+    }
+
+        @font-face {
+      font-family: "Monster Bike";
+      src: url('./assets/Monster-Bike.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+     @font-face {
+      font-family: "Neo Trash";
+      src: url('./assets/NeoTrash.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
     }
 
     .loader-graphic {
@@ -63,9 +79,19 @@
     }
 
     .velo-logo {
-      font-size: 24px;
+      font-size: 64px;
+      letter-spacing: -10px;
+      font-family: 'Monster Bike', sans-serif;
       margin-top: 16px;
-      color: #442200;
+      color: #000000;
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      font-family: 'Neo Trash', sans-serif;
+      text-align: center;
+      color: #333;
+      padding: 0 20px;
     }
 
     @keyframes rotate {
@@ -75,20 +101,34 @@
   </style>
 </head>
 <body>
-  <div class="loader-graphic">
+  <!--<div class="loader-graphic">
 
     <div class="triangle"></div>
     <div class="diamond"></div>
 
     <div class="circle left"></div>
     <div class="circle right"></div>
-  </div>
-  <div class="velo-logo">GoCycle</div>
+  </div>-->
+
+  <div class="velo-logo">No2</div>
+  <div class="loading-text" id="loading-type"></div>
 
   <script>
-    setTimeout(() => {
-      window.location.href = "start.html";
-    }, 3000);
-  </script>
+  const text = "No need to be No1\nIt's about the journey, not the race.";
+  const el = document.getElementById('loading-type');
+  let i = 0;
+  function typeWriter() {
+    if (i < text.length) {
+      el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+      i++;
+      setTimeout(typeWriter, 55);
+    }
+  }
+  typeWriter();
+
+  setTimeout(() => {
+    window.location.href = "auth.html";
+  }, 4000);
+</script>
 </body>
 </html>

@@ -9,9 +9,9 @@ const map = L.map('map', {
   layers: [openCycle]
 });
 L.control.layers({
-  "Fahrradkarte": openCycle,
-  "Satellitenkarte": satellite,
-  "Straßenkarte": osm
+  "Cycle map": openCycle,
+  "Satellite map": satellite,
+  "Street map": osm
 }).addTo(map);
 
 // --- Map Expand Button ---
@@ -23,7 +23,7 @@ growBtn.onclick = function() {
   grown = !grown;
   mapContainer.classList.toggle('grown', grown);
   growBtn.classList.toggle('sticky', grown);
-  growBtn.innerText = grown ? "⏫" : "⏬";
+  growBtn.innerText = grown ? "↑" : "↓";
   growBtn.title = grown ? "Karte wieder einklappen" : "Karte nach unten ausklappen";
   setTimeout(() => map.invalidateSize(), 400);
 };
@@ -413,8 +413,9 @@ function updateTourList() {
     li.className = "tour-item";
     const button = document.createElement('button');
     button.type = 'button';
-    button.innerHTML = `🚴 <b>${route.name}</b>: <b>${route.start}</b> → <b>${route.end}</b>`;
+    button.innerHTML = `<b>${route.name}</b>: <b>${route.start}</b> → <b>${route.end}</b>`;
     button.onclick = () => {
+      scrollToMap();
       clearLastPlannedMarkers();
       const poly = L.polyline(route.route, {color: "black", weight: 3}).addTo(map);
       lastPlannedMarkers.push(poly);
@@ -430,7 +431,7 @@ function updateTourList() {
         route.waypoints.forEach((wp, i) => {
           const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: '🛏️', iconSize: [24,24]})})
             .addTo(map)
-            .bindPopup("Zwischenstopp: " + (wp.name || `Schlafplatz ${i+1}`));
+            .bindPopup("Stopover: " + (wp.name || `Schlafplatz ${i+1}`));
           lastPlannedMarkers.push(m);
         });
       }
@@ -438,7 +439,7 @@ function updateTourList() {
       if (route.route.length > 1) {
         const m = L.marker(route.route[route.route.length-1], {icon: L.divIcon({className: '', html: '🎯', iconSize: [28,28]})})
           .addTo(map)
-          .bindPopup("Ziel");
+          .bindPopup("Destination");
         lastPlannedMarkers.push(m);
       }
       map.fitBounds(route.route);
@@ -449,14 +450,14 @@ function updateTourList() {
     const daysDiv = document.createElement('div');
     daysDiv.style.fontSize = "0.9em";
     daysDiv.style.color = "#2e8b57";
-    daysDiv.innerHTML = `⏳ ${days} Tag${days > 1 ? 'e' : ''}`;
+    daysDiv.innerHTML = `⏳ ${days} ${days === 1 ? 'day' : 'days'}`;
     li.appendChild(daysDiv);
 
     if (route.stats) {
       const stats = document.createElement('div');
       stats.style.fontSize = "0.85em";
       stats.style.color = "#666";
-      stats.innerHTML = `Länge: ${(route.stats.distance/1000).toFixed(1)} km &nbsp; | &nbsp; Dauer: ${(route.stats.duration/3600).toFixed(1)} h`;
+      stats.innerHTML = `Distance: ${(route.stats.distance/1000).toFixed(1)} km &nbsp; | &nbsp; Duration: ${(route.stats.duration/3600).toFixed(1)} h`;
       li.appendChild(stats);
     }
     tourList.appendChild(li);
@@ -475,6 +476,7 @@ function updateSpotSleepLists() {
       button.type = 'button';
       button.textContent = (spot.emoji || "📍") + " " + (spot.category || spot.name);
       button.onclick = () => {
+        scrollToMap();
         L.marker(spot.coord, {icon: L.divIcon({className: '', html: spot.emoji || "📍", iconSize: [24,24]})})
           .addTo(map)
           .bindPopup((spot.category || spot.name))
@@ -494,6 +496,7 @@ function updateSpotSleepLists() {
       button.type = 'button';
       button.textContent = "🛏️ " + (spot.category || spot.name);
       button.onclick = () => {
+        scrollToMap();
         L.marker(spot.coord, {icon: L.divIcon({className: '', html: '🛏️', iconSize: [24,24]})})
           .addTo(map)
           .bindPopup(spot.category || spot.name)
@@ -519,6 +522,7 @@ function clearLastPlannedMarkers() {
 
 // --- Route planen (orange, nicht speichern) ---
 document.getElementById('route-plan-btn').onclick = async function() {
+  scrollToMap();
   const routeName = document.getElementById('route-name').value || "Unbenannte Route";
   const startVal = document.getElementById('start-input').value;
   const endVal = document.getElementById('end-input').value;
@@ -590,7 +594,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
       lastPlannedRoute.waypoints.forEach((wp, i) => {
         const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: '🛏️', iconSize: [24,24]})})
           .addTo(map)
-          .bindPopup("Zwischenstopp: " + (wp.name || `Schlafplatz ${i+1}`));
+          .bindPopup("Stopover: " + (wp.name || `Schlafplatz ${i+1}`));
         lastPlannedMarkers.push(m);
       });
     }
@@ -598,7 +602,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
     if (coords.length > 1) {
       const m = L.marker(coords[coords.length-1], {icon: L.divIcon({className: '', html: '🎯', iconSize: [28,28]})})
         .addTo(map)
-        .bindPopup("Ziel");
+        .bindPopup("Destination");
       lastPlannedMarkers.push(m);
     }
     map.fitBounds(coords);
@@ -636,4 +640,9 @@ document.getElementById('spot-cancel-btn').onclick = function() {
   clearTempMarkers();
 };
 
-//# sourceMappingURL=map.js.map
+function scrollToMap() {
+  const mapContainer = document.getElementById('map-container') || document.getElementById('map');
+  if (mapContainer) {
+    mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}

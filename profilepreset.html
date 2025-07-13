@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoCycle – Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-bar">
+    <div class="title">
+      <span class="logo">No2</span>
+      <span>Profile</span>
+    </div>
+  </div>
+  <div>Your data and settings</div>
+</header>
+
+<div class="settings-toggle-container">
+  <input type="checkbox" id="settings-toggle" class="settings-toggle" hidden>
+  <label for="settings-toggle" class="settings-btn" title="Open settings">&#8226;&#8226;&#8226;</label>
+  <div class="settings-menu">
+    <button class="settings-item">Settings</button>
+    <button class="settings-item">Statistics</button>
+    <button class="settings-item">Help</button>
+    <button class="settings-item">Log out</button>
+  </div>
+</div>
+
+<main>
+  <div class="profile-section">
+    <img class="profile-pic" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile picture Moritz" />
+    <div class="profile-main">
+      <h2>Moritz</h2>
+      <dl class="profile-details">
+        <dt>Bicycle</dt>
+        <dd>Gravel bike, 28 inch</dd>
+        <dt>Fitness level</dt>
+        <dd>Advanced (Ø 14–16 km/h)</dd>
+        <dt>Sleeping preference</dt>
+        <dd>Camping & guesthouses</dd>
+        <dt>Favorite region</dt>
+        <dd>Brandenburg & Baltic Sea</dd>
+      </dl>
+      <section class="pinned-tours">
+        <h3>Pinned tours</h3>
+        <ul>
+          <li>Berlin → Baltic Sea <span class="tour-meta">(5 days, Ø15 km/h)</span></li>
+          <li>Spreewald Loop <span class="tour-meta">(3 days, Ø13 km/h)</span></li>
+          <li>Brandenburg Lake District <span class="tour-meta">(4 days, Ø14 km/h)</span></li>
+        </ul>
+      </section>
+
+  <section class="badges">
+        <h3>Badges</h3>
+    <div class="badge-row">
+      <button class="monster-badge-btn" tabindex="0" data-badge="A" aria-label="Adventurer badge">A</button>
+      <button class="monster-badge-btn" tabindex="0" data-badge="B" aria-label="Buddy badge">B</button>
+      <button class="monster-badge-btn" tabindex="0" data-badge="C" aria-label="Climber badge">C</button>
+      <button class="monster-badge-btn" tabindex="0" data-badge="D" aria-label="Discoverer badge">D</button>
+      <button class="monster-badge-btn" tabindex="0" data-badge="E" aria-label="Endurance badge">E</button>
+      <div id="badge-info" class="badge-info"></div>
+    </div>
+  </div>
+</section>
+
+  <section class="stats">
+    <h3>Statistics</h3>
+    <div class="stat-item">
+      <span class="stat-label">Total distance:</span>
+      <span class="stat-value">1,234 km</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Tours completed:</span>
+      <span class="stat-value">12</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Average speed:</span>
+      <span class="stat-value">15 km/h</span>
+    </div>
+  </section>
+
+
+  </div>
+</main>
+
+<nav>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Plan</a>
+  <a href="/profile.html">Profile</a>
+</nav>
+
+<script>
+const badgeDescriptions = {
+  A: "Adventurer: Loves exploring new routes and going off the beaten path.",
+  B: "Buddy: Frequently rides with friends and enjoys group tours.",
+  C: "Climber: Never shies away from a hill and enjoys challenging climbs.",
+  D: "Discoverer: Always looking for new spots and hidden gems.",
+  E: "Endurance: Can ride long distances and keeps going when others stop."
+};
+
+document.querySelectorAll('.monster-badge-btn').forEach(badge => {
+  badge.addEventListener('click', showBadgeInfo);
+  badge.addEventListener('keydown', function(e) {
+    if (e.key === "Enter" || e.key === " ") showBadgeInfo.call(badge, e);
+  });
+});
+
+function showBadgeInfo(e) {
+  const badge = e.currentTarget;
+  const badgeKey = badge.getAttribute('data-badge');
+  const infoBox = document.getElementById('badge-info');
+  infoBox.textContent = badgeDescriptions[badgeKey] || "No info available for this badge.";
+  infoBox.classList.add('active');
+
+  // Position the speech bubble below the badge
+  const badgeRect = badge.getBoundingClientRect();
+  const parentRect = badge.parentElement.getBoundingClientRect();
+  infoBox.style.left = (badge.offsetLeft + badge.offsetWidth / 2) + "px";
+  infoBox.style.top = (badge.offsetTop - infoBox.offsetHeight - 1) + "px";
+  infoBox.style.transform = "translateX(-50%)";
+
+  setTimeout(() => {
+    document.addEventListener('mousedown', hideBadgeInfo, { once: true });
+  }, 0);
+}
+
+function hideBadgeInfo(e) {
+  const infoBox = document.getElementById('badge-info');
+  if (infoBox) infoBox.classList.remove('active');
+}
+
+window.addEventListener('message', async (event) => {
+  if (!event.data || !event.data.demoAction) return;
+  const action = event.data.demoAction;
+
+  // START.html
+  if (action === 'addSpot' && document.getElementById('add-spot')) {
+    document.getElementById('plus-button').click();
+    setTimeout(() => document.getElementById('add-spot').click(), 500);
+    setTimeout(() => parent.postMessage({demoDone: true}, '*'), 1200);
+  }
+  if (action === 'showRoute' && document.querySelector('.tour-item button')) {
+    setTimeout(() => {
+      document.querySelector('.tour-item button').click();
+      parent.postMessage({demoDone: true}, '*');
+    }, 600);
+  }
+  if (action === 'likeLog' && document.querySelector('.like-btn')) {
+    setTimeout(() => {
+      document.querySelector('.like-btn').click();
+      parent.postMessage({demoDone: true}, '*');
+    }, 600);
+  }
+
+  // PLAN.html
+  if (action === 'planTour' && document.getElementById('route-plan-btn')) {
+    setTimeout(() => {
+      document.getElementById('route-plan-btn').click();
+      parent.postMessage({demoDone: true}, '*');
+    }, 800);
+  }
+
+  // PROFILE.html
+  if (action === 'openSettings' && document.querySelector('.settings-btn')) {
+    setTimeout(() => {
+      document.querySelector('.settings-btn').click();
+      setTimeout(() => parent.postMessage({demoDone: true}, '*'), 900);
+    }, 600);
+  }
+  if (action === 'closeSettings' && document.getElementById('settings-toggle')) {
+    setTimeout(() => {
+      document.getElementById('settings-toggle').checked = false;
+      parent.postMessage({demoDone: true}, '*');
+    }, 700);
+  }
+});
+</script>
+
+</body>
+</html>

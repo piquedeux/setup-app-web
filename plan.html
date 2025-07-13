@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GoCycle – Tour planen</title>
+  <title>GoCycle – Plan Tour</title>
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
@@ -12,10 +12,10 @@
 
 <header>
   <div class="title">
-    <span class="logo">GoCycle</span>
-    <span>Planen</span>
+    <span class="logo">No2</span>
+    <span>Plan</span>
   </div>
-  <div>🗺 Plane deine nächste Route</div>
+  <div>Plan your next route</div>
 </header>
 
 <main>
@@ -24,98 +24,142 @@
       <div id="map"></div>
     </div>
 
-    <div id="map-grow-btn" title="Karte nach unten ausklappen">⏬</div>
+    <div id="map-grow-btn" title="Expand map down">↓</div>
     
     <section id="forms-section" style="width:100%;max-width:500px;margin:0 auto;">
       <details id="tour-details" style="margin-bottom:1em;">
-        <summary style="font-size:1.1em;cursor:pointer;">Neue Tour planen</summary>
+        <summary style="font-size:1.1em;cursor:pointer;">Plan new tour</summary>
        <section id="route-plan-section">
   <form id="tour-form">
-    <label>Routenname:
-      <input type="text" id="route-name" placeholder="z.B. Berlin nach Potsdam" required>
+    <label>Route name:
+      <input type="text" id="route-name" placeholder="e.g. Berlin to Potsdam" required>
     </label>
-    <!-- Beispiel für Startpunkt -->
-<label>Startpunkt:
-  <input type="text" id="start-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
-  <div class="suggestions" id="start-suggestions"></div>
-  <button type="button" id="start-map-pick">🗺️</button>
-  <button type="button" id="start-geolocate">📍</button>
-  <button type="button" id="start-geocode-btn">Adresse suchen</button>
-</label>
-<!-- Analog für Ziel und Zwischenstopps -->
-<label>Ziel:
-  <input type="text" id="end-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
-  <div class="suggestions" id="end-suggestions"></div>
-  <button type="button" id="end-map-pick">🗺️</button>
-  <button type="button" id="end-geolocate">📍</button>
-  <button type="button" id="end-geocode-btn">Adresse suchen</button>
-</label>
-<label>Zwischenstopps:
-  <input type="text" id="waypoint-input" autocomplete="off" placeholder="Adresse, Spot oder Schlafplatz">
-  <div class="suggestions" id="waypoint-suggestions"></div>
-  <button type="button" id="waypoint-map-pick">🗺️</button>
-  <button type="button" id="waypoint-geolocate">📍</button>
-  <button type="button" id="waypoint-geocode-btn">Adresse suchen</button>
-  <ul id="waypoint-list"></ul>
-</label>
-<select id="group-type">
-  <option value="private">Nur für Freunde</option>
-  <option value="public">Offene Gruppenfahrt</option>
-</select>
-    <button type="button" id="route-plan-btn">Route planen</button>
-    <button type="button" id="route-save-btn">Route speichern</button>
-    <!-- Beispiel für Route -->
-<button type="button" id="route-cancel-btn">Abbrechen</button>
+    <label>Start point:
+      <input type="text" id="start-input" autocomplete="off" placeholder="Address, spot or sleep spot">
+      <div class="suggestions" id="start-suggestions"></div>
+      <button type="button" id="start-map-pick">Map</button>
+      <button type="button" id="start-geolocate">Locate</button>
+      <button type="button" id="start-geocode-btn">Search address</button>
+    </label>
+    <label>Destination:
+      <input type="text" id="end-input" autocomplete="off" placeholder="Address, spot or sleep spot">
+      <div class="suggestions" id="end-suggestions"></div>
+      <button type="button" id="end-map-pick">Map</button>
+      <button type="button" id="end-geolocate">Locate</button>
+      <button type="button" id="end-geocode-btn">Search address</button>
+    </label>
+    <label>Stopovers:
+      <input type="text" id="waypoint-input" autocomplete="off" placeholder="Address, spot or sleep spot">
+      <div class="suggestions" id="waypoint-suggestions"></div>
+      <button type="button" id="waypoint-map-pick">Map</button>
+      <button type="button" id="waypoint-geolocate">Locate</button>
+      <button type="button" id="waypoint-geocode-btn">Search address</button>
+      <ul id="waypoint-list"></ul>
+    </label>
+    <select id="group-type">
+      <option value="private">Friends only</option>
+      <option value="public">Open group ride</option>
+    </select>
+    <button type="button" id="route-plan-btn">Plan route</button>
+    <button type="button" id="route-save-btn">Save route</button>
+    <button type="button" id="route-cancel-btn">Cancel</button>
   </form>
 </section>
       </details>
 
-
       <details id="spot-details">
-        <summary style="font-size:1.1em;cursor:pointer;">Neuen Spot hinzufügen</summary>
+        <summary style="font-size:1.1em;cursor:pointer;">Add new spot</summary>
         <section id="spot-add-section">
   <form id="spot-form">
     <label>Name: <input type="text" id="spot-name" required></label>
-    <label>Typ:
+    <label>Type:
       <select id="spot-type">
         <option value="spot">Spot</option>
-        <option value="sleep">Schlafplatz</option>
+        <option value="sleep">Sleep spot</option>
       </select>
     </label>
-    <button type="button" id="spot-map-pick">🗺️</button>
-    <button type="button" id="spot-geolocate">📍</button>
-    <input type="text" id="spot-coord" placeholder="Koordinaten" readonly required>
-    <button type="submit">Hinzufügen</button>
-    <!-- Beispiel für Spot -->
-<button type="button" id="spot-cancel-btn">Abbrechen</button>
+    <button type="button" id="spot-map-pick">Map</button>
+    <button type="button" id="spot-geolocate">Locate</button>
+    <input type="text" id="spot-coord" placeholder="Coordinates" readonly required>
+    <button type="submit">Add</button>
+    <button type="button" id="spot-cancel-btn">Cancel</button>
   </form>
 </section>
       </details>
     </section>
+  
     <div id="diary-section" class="diary-section">
       <section>
-  <h3>Meine Touren</h3>
-  <ul id="tour-list"></ul>
-  <h3>Meine Spots</h3>
-  <ul id="spot-list"></ul>
-  <h3>Meine Schlafplätze</h3>
-  <ul id="sleep-list"></ul>
+  <h3>My tours</h3>
+  <ul id="tour-list" class="tour-list"></ul>
+  <h3>My spots</h3>
+  <ul id="spot-list" class="tour-list"></ul>
+  <h3>My sleep spots</h3>
+  <ul id="sleep-list" class="tour-list"></ul>
 </section>
   </div>
+
 </div>
 </main>
 
-
-
 <nav>
-  <a href="/setup-app-web/start.html">Start</a>
-  <a href="/setup-app-web/plan.html" class="active">Planen</a>
-  <a href="/setup-app-web/profile.html">Profil</a>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Plan</a>
+  <a href="/profile.html">Profile</a>
 </nav>
-
-
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="plan.js"></script>
+<script>
+window.addEventListener('message', async (event) => {
+  if (!event.data || !event.data.demoAction) return;
+  const action = event.data.demoAction;
+
+  // Helper: open form
+  function openTourForm() {
+    const details = document.getElementById('tour-details');
+    if (details && !details.open) details.open = true;
+  }
+
+  // Dummy data for route
+  function fillTourForm() {
+    document.getElementById('route-name').value = "Demo Tour Berlin";
+    document.getElementById('start-input').value = "52.520,13.405";
+    document.getElementById('end-input').value = "52.434,13.180";
+    document.getElementById('waypoint-input').value = "52.48,13.25";
+    document.getElementById('waypoint-geocode-btn').click();
+  }
+
+  // PLAN.html
+  if (action === 'planAndSaveRoute' && document.getElementById('route-plan-btn')) {
+    openTourForm();
+    setTimeout(() => {
+      fillTourForm();
+      setTimeout(() => {
+        document.getElementById('route-plan-btn').click();
+        setTimeout(() => {
+          document.getElementById('route-save-btn').click();
+          setTimeout(() => parent.postMessage({demoDone: true}, '*'), 1200);
+        }, 1800);
+      }, 1200);
+    }, 600);
+  }
+
+  if (action === 'showPlannedRoute' && document.querySelector('#tour-list li button')) {
+    setTimeout(() => {
+      document.querySelector('#tour-list li button').click();
+      setTimeout(() => parent.postMessage({demoDone: true}, '*'), 900);
+    }, 700);
+  }
+
+  if (action === 'clickSleep' && document.querySelector('#sleep-list li button')) {
+    setTimeout(() => {
+      document.querySelector('#sleep-list li button').click();
+      setTimeout(() => parent.postMessage({demoDone: true}, '*'), 900);
+    }, 700);
+  }
+});
+</script>
+
 </body>
 </html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GoCycle – Profil</title>
+  <title>No2 – Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -12,64 +12,73 @@
 <header>
   <div class="header-bar">
     <div class="title">
-      <span class="logo">GoCycle</span>
-      <span>Profil</span>
+      <span class="logo">No2</span>
+      <span>Profile</span>
     </div>
   </div>
-  <div>👤 Deine Daten und Einstellungen</div>
+  <div>Your data and settings</div>
 </header>
 
 <div class="settings-toggle-container">
   <input type="checkbox" id="settings-toggle" class="settings-toggle" hidden>
-  <label for="settings-toggle" class="settings-btn" title="Einstellungen öffnen">&#8226;&#8226;&#8226;</label>
+  <label for="settings-toggle" class="settings-btn" title="Open settings">&#8226;&#8226;&#8226;</label>
   <div class="settings-menu">
-    <button class="settings-item">Einstellungen</button>
-    <button class="settings-item">Statistiken</button>
-    <button class="settings-item">Hilfe</button>
-    <button class="settings-item">Abmelden</button>
+    <button class="settings-item" onclick="alert('Settings coming soon!')">Settings</button>
+    <button class="settings-item" onclick="alert('Statistics coming soon!')">Statistics</button>
+    <button class="settings-item" onclick="alert('Help coming soon!')">Help</button>
+    <button class="settings-item" onclick="logout()">Log out</button>
   </div>
 </div>
 
-<main>
+<main class="profile-main">
   <div class="profile-section">
-    <img class="profile-pic" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild Moritz" />
+    <img id="profile-pic" class="profile-pic" src="" alt="Profile picture" style="display:none;" />
     <div class="profile-main">
-      <h2>Moritz</h2>
+      <h2 id="profile-name"></h2>
       <dl class="profile-details">
-        <dt>Fahrrad</dt>
-        <dd>Gravelbike, 28 Zoll</dd>
-        <dt>Fitness-Level</dt>
-        <dd>Fortgeschritten (Ø 14–16 km/h)</dd>
-        <dt>Schlafgewohnheit</dt>
-        <dd>Camping & Pensionen</dd>
-        <dt>Lieblingsregion</dt>
-        <dd>Brandenburg & Ostsee</dd>
+        <dt>Bicycle</dt>
+        <dd id="profile-bike"></dd>
+        <dt>Fitness level</dt>
+        <dd id="profile-fitness"></dd>
+        <dt>Sleeping preference</dt>
+        <dd id="profile-sleep"></dd>
+        <dt>Favorite region</dt>
+        <dd id="profile-region"></dd>
       </dl>
-      <section class="pinned-tours">
-        <h3>📌 Angepinnte Touren</h3>
-        <ul>
-          <li>🚴‍♂️ Berlin → Ostsee <span class="tour-meta">(5 Tage, 15 km/h)</span></li>
-          <li>🌲 Rundkurs Spreewald <span class="tour-meta">(3 Tage, 13 km/h)</span></li>
-          <li>🏞️ Brandenburg Seenplatte <span class="tour-meta">(4 Tage, 14 km/h)</span></li>
-        </ul>
-      </section>
+      <!-- Optionally, add more sections here -->
     </div>
-      <div class="spot-counter">
-  <span>🟢 Spots hinzugefügt: <strong>12</strong></span>
-</div>
-
   </div>
-
-
 </main>
 
-
-
 <nav>
-  <a href="/setup-app-web/start.html">Start</a>
-  <a href="/setup-app-web/plan.html">Planen</a>
-  <a href="/setup-app-web/profile.html" class="active">Profil</a>
+  <a href="/start.html">Start</a>
+  <a href="/plan.html">Plan</a>
+  <a href="/profile.html">Profile</a>
 </nav>
+
+<script>
+  // Load profile from localStorage
+  const profile = JSON.parse(localStorage.getItem('no2_profile'));
+  if (!profile) {
+    window.location.href = "auth.html";
+  } else {
+    document.getElementById('profile-name').textContent = profile.name || '';
+    document.getElementById('profile-bike').textContent = profile.bike || '';
+    document.getElementById('profile-fitness').textContent = profile.fitness || '';
+    document.getElementById('profile-sleep').textContent = profile.sleep || '';
+    document.getElementById('profile-region').textContent = profile.region || '';
+    if (profile.photo) {
+      const img = document.getElementById('profile-pic');
+      img.src = profile.photo;
+      img.style.display = '';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('no2_profile');
+    window.location.href = "auth.html";
+  }
+</script>
 
 </body>
 </html>

@@ -15,16 +15,16 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Map Setup (OpenCycleMap als Start-Layer)
 const map = L.map('map', {
   center: [52.52, 13.3],
-  zoom: 8,
+  zoom: 10,
   layers: [openCycle]
 });
 window.map = map;
 
 // Layer Control
 L.control.layers({
-  "Fahrradkarte": openCycle,
-  "Satellitenkarte": satellite,
-  "Straßenkarte": osm
+  "Cycle map": openCycle,
+  "Satellite map": satellite,
+  "Street map": osm
 }).addTo(map);
 
 // Spots generieren
@@ -253,19 +253,19 @@ async function updateTourFeed() {
 
     div.innerHTML = `
       <strong>${tour.name}</strong><br>
-      Dauer: ${tour.days} Tage<br>
-      Erstellt von: <a href="/profile.html?user=${encodeURIComponent(tour.creator)}" class="profile-link">${tour.creator}</a><br>
-      ${tour.multiDay ? "Mehrtägige Tour" : "Tages-Tour"}${meetingPointText}<br>
-      <button class="join-tour-btn" data-tour="${tour.id}">🚴 Mitfahren</button>
-      <button class="set-meeting-point" data-tour="${tour.id}">📌 Treffpunkt setzen</button>
-      <button class="show-route-btn" data-tour="${tour.id}">🗺️ Route anzeigen</button>
+      Duration: ${tour.days} days<br>
+      Created by: <a href="/profile.html?user=${encodeURIComponent(tour.creator)}" class="profile-link">${tour.creator}</a><br>
+      ${meetingPointText}<br>
+      <button class="join-tour-btn" data-tour="${tour.id}">Join</button>
+      <button class="set-meeting-point" data-tour="${tour.id}">Set meeting point</button>
+      <button class="show-route-btn" data-tour="${tour.id}">Show route</button>
       <div class="route-info" id="route-info-${tour.id}" style="font-size:0.9em; color:#666; margin-top:0.3em;"></div>
     `;
 
     // Mitfahren
     div.querySelector('.join-tour-btn').addEventListener('click', e => {
       e.stopPropagation();
-      alert(`Du nimmst jetzt an der Tour '${tour.name}' teil!`);
+      showJoinHint(tour.name, tour.creator);
     });
 
     // Treffpunkt setzen
@@ -335,6 +335,7 @@ async function updateTourFeed() {
     // Route anzeigen
     div.querySelector('.show-route-btn').addEventListener('click', async e => {
       e.stopPropagation();
+      scrollToMap();
 
       const startCoords = tour.startCoords;
       const endCoords = tour.endCoords;
@@ -429,24 +430,24 @@ quickOverlay.addEventListener('mousedown', (e) => {
 document.getElementById('add-spot').addEventListener('click', () => {
   plusMenu.style.display = 'none';
   quickOverlayContent.innerHTML = `
-    <h4>Schnell Spot hinzufügen</h4>
-    <label for="quick-spot-category">Kategorie</label>
+    <h4>Quick Add Spot</h4>
+    <label for="quick-spot-category">Category</label>
     <select id="quick-spot-category" required>
-<option value="">Bitte wählen</option>
-<option value="Wasserstelle">💧 Wasserstelle</option>
-<option value="Rastplatz">🌳 Rastplatz</option>
-<option value="Toilette">🚻 Toilette</option>
-<option value="Kneipe">🍺 Kneipe</option>
-<option value="Krankenhaus">🏥 Krankenhaus</option>
-<option value="Restaurant">🍽️ Restaurant</option>
-<option value="Werkstatt">🔧 Werkstatt</option>
-<option value="Post">📮 Post</option>
-<option value="Cafe">☕️ Café</option>
+      <option value="">Please select</option>
+      <option value="Water">Water</option>
+      <option value="Rest area">Rest area</option>
+      <option value="Toilet">Toilet</option>
+      <option value="Pub">Pub</option>
+      <option value="Hospital">Hospital</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Workshop">Workshop</option>
+      <option value="Post">Post</option>
+      <option value="Cafe">Cafe</option>
     </select>
     <div class="quick-form-actions">
-      <button id="quick-spot-here" type="button">Spot hier hinzufügen</button>
-      <button id="quick-spot-manual" type="button">Manuell hinzufügen</button>
-      <button id="quick-spot-cancel" type="button" class="close-btn">Abbrechen</button>
+      <button id="quick-spot-here" type="button">Add spot here</button>
+      <button id="quick-spot-manual" type="button">Add manually</button>
+      <button id="quick-spot-cancel" type="button" class="close-btn">Cancel</button>
     </div>
   `;
   quickOverlay.style.display = 'flex';
@@ -482,11 +483,11 @@ document.getElementById('start-plan').addEventListener('click', () => {
     <h4>Schnell Route planen</h4>
     <input id="quick-dest" type="text" placeholder="Adresse oder Koordinaten" required>
     <div id="quick-dest-suggestions" class="suggestions"></div>
-    <button id="quick-dest-map-pick" type="button">Auf Karte wählen</button>
+    <button id="quick-dest-map-pick" type="button">Pick on map</button>
     <div class="quick-form-actions">
-      <button id="quick-route-plan" type="button">Route planen</button>
-      <button id="quick-multiday" type="button">Mehrtagestour planen</button>
-      <button id="quick-route-cancel" type="button" class="close-btn">Abbrechen</button>
+      <button id="quick-route-plan" type="button">Plan route</button>
+      <button id="quick-multiday" type="button">Plan multi-day tour</button>
+      <button id="quick-route-cancel" type="button" class="close-btn">Cancel</button>
     </div>
   `;
   quickOverlay.style.display = 'flex';
@@ -604,52 +605,62 @@ function renderLogs() {
   const logList = document.getElementById('log-list');
   logList.innerHTML = '';
   logs.slice(0, logsShown).forEach((log, idx) => {
+    // Always assign a demo route if missing
+    if (!log.routeId && savedTours.length) {
+      log.routeId = savedTours[Math.floor(Math.random() * savedTours.length)].id;
+    }
     const entry = document.createElement('div');
     entry.className = 'log-entry';
     const maxLen = 180;
     const isLong = log.content.length > maxLen;
     const shortText = isLong ? log.content.slice(0, maxLen) + '…' : log.content;
     const contentHtml = isLong
-      ? `<span class="content">${shortText}</span> <span class="toggle-btn">Mehr anzeigen</span>`
+      ? `<span class="content">${shortText}</span> <span class="toggle-btn">Show more</span>`
       : `<span class="content">${log.content}</span>`;
 
+    // Format date European style
+    let dateObj = new Date(log.date);
+    let dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+      ' ' +
+      dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+
     entry.innerHTML = `
-      <div class="author">${log.author}</div>
-      <div class="date">${log.date}</div>
+      <div class="author">
+        <a href="/profile.html?user=${encodeURIComponent(log.author)}" class="profile-link">${log.author}</a>
+      </div>
+      <div class="date">${dateStr}</div>
       ${contentHtml}
-      <button class="like-btn${log.liked ? ' liked' : ''}">❤️ ${log.likes}</button>
+      <button class="show-route-btn">Show route</button>
     `;
     if (isLong) {
       const toggle = entry.querySelector('.toggle-btn');
       const contentDiv = entry.querySelector('.content');
       toggle.onclick = () => {
-        if (toggle.textContent === "Mehr anzeigen") {
+        if (toggle.textContent === "Show more") {
           contentDiv.textContent = log.content;
-          toggle.textContent = "Weniger anzeigen";
+          toggle.textContent = "Show less";
           entry.classList.add('expanded');
         } else {
           contentDiv.textContent = shortText;
-          toggle.textContent = "Mehr anzeigen";
+          toggle.textContent = "Show more";
           entry.classList.remove('expanded');
         }
       };
     }
-    const likeBtn = entry.querySelector('.like-btn');
-    likeBtn.onclick = () => {
-      if (!log.liked) {
-        log.likes++;
-        log.liked = true;
-        likeBtn.classList.add('liked');
+    // Show route button functionality
+    const showRouteBtn = entry.querySelector('.show-route-btn');
+    showRouteBtn.onclick = () => {
+      scrollToMap();
+      const route = savedTours.find(t => t.id === log.routeId);
+      if (route) {
+        document.querySelector(`.show-route-btn[data-tour="${route.id}"]`)?.click();
       } else {
-        log.likes--;
-        log.liked = false;
-        likeBtn.classList.remove('liked');
+        const randomTour = savedTours[Math.floor(Math.random() * savedTours.length)];
+        document.querySelector(`.show-route-btn[data-tour="${randomTour.id}"]`)?.click();
       }
-      likeBtn.textContent = `❤️ ${log.likes}`;
     };
     logList.appendChild(entry);
   });
-  // "Mehr anzeigen"-Button ein-/ausblenden
   document.getElementById('load-more-logs').style.display = logsShown < logs.length ? 'block' : 'none';
 }
 document.getElementById('load-more-logs').onclick = () => {
@@ -661,36 +672,80 @@ document.getElementById('load-more-logs').onclick = () => {
 document.getElementById('add-log').addEventListener('click', () => {
   plusMenu.style.display = 'none';
   quickOverlayContent.innerHTML = `
-    <h4>Neuen Log-Eintrag erstellen</h4>
-    <input id="log-author" type="text" placeholder="Dein Name" required style="margin-bottom:0.5em;">
-    <textarea id="log-content" rows="5" placeholder="Was möchtest du teilen?" required style="width:100%;"></textarea>
+    <h4>Create new log entry</h4>
+    <input id="log-author" type="text" placeholder="Your name" required style="margin-bottom:0.5em;">
+    <textarea id="log-content" rows="5" placeholder="What do you want to share?" required style="width:100%;"></textarea>
     <div class="quick-form-actions">
-      <button id="log-save-btn" type="button">Posten</button>
-      <button id="log-cancel-btn" type="button" class="close-btn">Abbrechen</button>
+      <button id="log-save-btn" type="button">Post</button>
+      <button id="log-cancel-btn" type="button" class="close-btn">Cancel</button>
     </div>
   `;
   quickOverlay.style.display = 'flex';
   document.getElementById('log-cancel-btn').onclick = () => quickOverlay.style.display = 'none';
   document.getElementById('log-save-btn').onclick = () => {
-    const author = document.getElementById('log-author').value.trim() || "Anonym";
+    const author = document.getElementById('log-author').value.trim() || "Anonymous";
     const content = document.getElementById('log-content').value.trim();
     if (!content) {
-      alert("Bitte Text eingeben!");
+      alert("Please enter some text!");
       return;
     }
     const now = new Date();
-    // Einheitliches Format: JJJJ-MM-TT HH:MM
-    const date = now.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
-      ' ' +
-      now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', hour12: false });
-    logs.unshift({author, date, content, likes: 0});
+    const date = now.toISOString();
+    const routeId = savedTours[Math.floor(Math.random() * savedTours.length)]?.id;
+    logs.unshift({author, date, content, routeId});
     quickOverlay.style.display = 'none';
     renderLogs();
   };
 });
 
-// Map und Touren-Feed wie gehabt initialisieren...
-// (Dein bestehender Map- und Touren-Code bleibt erhalten)
+
+function showJoinHint(tourName, creator) {
+  let hint = document.getElementById('join-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'join-hint';
+    hint.style.position = 'fixed';
+    hint.style.left = '50%';
+    hint.style.bottom = '100px';
+    hint.style.transform = 'translateX(-50%)';
+    hint.style.background = '#000';
+    hint.style.color = '#fff';
+    hint.style.padding = '0.8em 1.5em';
+    hint.style.borderRadius = '1.5em';
+    hint.style.fontSize = '1.1em';
+    hint.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
+    hint.style.zIndex = 9999;
+    hint.style.pointerEvents = 'none';
+    document.body.appendChild(hint);
+  }
+  hint.textContent = `Du nimmst jetzt an der Route von "${tourName}" teil. ${creator} hat deine Anfrage erhalten.`;
+  hint.style.display = 'block';
+  hint.style.opacity = '1';
+  setTimeout(() => {
+    hint.style.opacity = '0';
+    setTimeout(() => { hint.style.display = 'none'; }, 600);
+  }, 3500);
+}
+
+// Schließen des Plus-Menüs bei Klick außerhalb
+document.addEventListener('mousedown', (e) => {
+  const plusMenu = document.getElementById('plus-menu');
+  const plusBtn = document.getElementById('plus-button');
+  if (
+    plusMenu.style.display === 'flex' &&
+    !plusMenu.contains(e.target) &&
+    e.target !== plusBtn
+  ) {
+    plusMenu.style.display = 'none';
+  }
+});
 
 renderLogs();
 updateTourFeed();
+
+function scrollToMap() {
+  const mapContainer = document.getElementById('map-container-start') || document.getElementById('map');
+  if (mapContainer) {
+    mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
