@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>No2</title>
+  <title>Teral</title>
 <!-- Metadata -->
 <meta name="description" content="A social cycling app that connects riders, tracks routes, and explores the culture of movement through shared experiences." />
 
@@ -96,14 +96,14 @@
     .velo-logo {
       font-size: 64px;
       letter-spacing: -10px;
-      font-family: 'Monster Bike', sans-serif;
+      font-family: Kosugi, sans-serif;
       margin-top: 16px;
       color: #000000;
     }
 
     .loading-text {
       font-size: 1.2rem;
-      font-family: 'Neo Trash', sans-serif;
+      font-family: Kosugi Maru, sans-serif;
       text-align: center;
       color: #333;
       padding: 0 20px;
@@ -124,26 +124,29 @@
     <div class="circle left"></div>
     <div class="circle right"></div>
   </div>-->
+<div class="velo-logo">Teral</div>
+<div class="loading-text" id="loading-type"></div>
 
-  <div class="velo-logo">No2</div>
-  <div class="loading-text" id="loading-type"></div>
-
-  <script>
-  const text = "No need to be No1\nIt's about the journey, not the race.";
+<script>
+  const text = "You don't have to be No1\nThe road is the reason.";
   const el = document.getElementById('loading-type');
   let i = 0;
+  const typingSpeed = 50;
+  const totalDuration = text.length * typingSpeed + 600;
+
   function typeWriter() {
     if (i < text.length) {
       el.innerHTML += text[i] === "\n" ? "<br>" : text[i];
       i++;
-      setTimeout(typeWriter, 55);
+      setTimeout(typeWriter, typingSpeed);
     }
   }
+
   typeWriter();
 
   setTimeout(() => {
     window.location.href = "auth.html";
-  }, 4000);
+  }, totalDuration);
 </script>
 </body>
 </html>
