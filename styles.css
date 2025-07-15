@@ -7,10 +7,6 @@
   --font-secondary: 'Kosugi', Arial, sans-serif;
 }
 
-html {
-  background-color: var(--color-primary);
-}
-
 body {
   padding-top: env(safe-area-inset-top);
   margin: 0;
@@ -65,7 +61,7 @@ header {
 
 .logo {
   font-size: 2.8rem;
- letter-spacing: -0.1rem;
+ letter-spacing: -10px;
   font-family: var(--font-secondary);
 }
 
@@ -83,8 +79,7 @@ nav {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   font-family: var(--font-secondary);
-  font-size: 1.125rem;
-  letter-spacing: -0.1rem;
+  font-size: 1.4rem;
   color: var(--color-text);
   box-shadow: 0 -0.0625rem 0.5rem rgba(0, 0, 0, 0.1);
   z-index: 10000;
