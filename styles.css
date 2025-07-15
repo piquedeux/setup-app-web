@@ -7,7 +7,12 @@
   --font-secondary: 'Kosugi', Arial, sans-serif;
 }
 
+html {
+  background-color: var(--color-primary);
+}
+
 body {
+  padding-top: env(safe-area-inset-top);
   margin: 0;
   font-family: var(--font-secondary);
   display: flex;
