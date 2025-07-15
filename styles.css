@@ -108,7 +108,6 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 1.5em;
-  width: 100%;
   max-width: 900px;
   margin: 0 auto;
 }
