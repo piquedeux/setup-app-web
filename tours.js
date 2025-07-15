@@ -272,11 +272,11 @@ async function updateTourFeed() {
     div.querySelector('.set-meeting-point').addEventListener('click', async e => {
       e.stopPropagation();
       quickOverlayContent.innerHTML = `
-        <h4>Treffpunkt wählen</h4>
-        <input id="meeting-search" type="text" placeholder="Adresse oder Koordinaten">
+        <h4>Select meeting point</h4>
+        <input id="meeting-search" type="text" placeholder="Address or Coordinates">
         <div id="meeting-suggestions" class="suggestions"></div>
-        <button id="meeting-map-pick" type="button">Auf Karte wählen</button>
-        <button id="meeting-cancel" type="button" class="close-btn">Abbrechen</button>
+        <button id="meeting-map-pick" type="button">Set on map</button>
+        <button id="meeting-cancel" type="button" class="close-btn">Close</button>
       `;
       quickOverlay.style.display = 'flex';
 
@@ -718,7 +718,7 @@ function showJoinHint(tourName, creator) {
     hint.style.pointerEvents = 'none';
     document.body.appendChild(hint);
   }
-  hint.textContent = `Du nimmst jetzt an der Route von "${tourName}" teil. ${creator} hat deine Anfrage erhalten.`;
+  hint.textContent = `You send a request to join the tour by "${tourName}". ${creator} Received your request, wait until he accepts.`;
   hint.style.display = 'block';
   hint.style.opacity = '1';
   setTimeout(() => {
