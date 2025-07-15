@@ -61,7 +61,8 @@ header {
 
 .logo {
   font-size: 2.8rem;
- letter-spacing: -10px;
+  font-weight: 500;
+ letter-spacing: -2px;
   font-family: var(--font-secondary);
 }
 
