@@ -712,7 +712,22 @@ main {
   gap: 0.8em;
 }
 
-button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn),
+#load-more-logs, #show-less-logs {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  font-weight: 600;
+  font-size: 0.9em;
+  user-select: none;
+  padding: 0;
+}
+
+#load-more-logs:hover, #show-less-logs:hover {
+  text-decoration: underline;
+}
+
+button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn):not(#load-more-logs):not(#show-less-logs),
 input[type="button"],
 input[type="submit"] {
   font-family: var(--font-secondary);
@@ -729,8 +744,8 @@ input[type="submit"] {
   transition: background 0.2s, color 0.2s;
 }
 
-button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn):hover,
-button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn):focus,
+button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn):not(#load-more-logs):not(#show-less-logs):hover,
+button:not(#plus-button):not(#plus-menu button):not(.monster-badge-btn):not(#load-more-logs):not(#show-less-logs):focus,
 input[type="button"]:hover,
 input[type="button"]:focus,
 input[type="submit"]:hover,
