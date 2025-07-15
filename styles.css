@@ -700,11 +700,7 @@ main {
 .profile-link {
   color: #777777;
   font-family: var(--font-primary);
-  text-decoration: none;
-}
-
-.profile-link {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 #log-list {
