@@ -721,6 +721,7 @@ main {
   font-size: 0.9em;
   user-select: none;
   padding: 0;
+  margin-top: 10px;
 }
 
 #load-more-logs:hover, #show-less-logs:hover {
