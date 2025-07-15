@@ -166,23 +166,18 @@ const controlHint = document.getElementById('control-hint');
 const demoBubble = document.getElementById('demo-bubble');
 
 const demoSteps = [
-  // Startseite
-  { page: 'start.html', action: 'addSpot', bubble: 'Ich füge einen neuen Spot hinzu.', scroll: 0 },
-  { page: 'start.html', action: 'likeLog', bubble: 'Ich like einen Log-Eintrag.', scroll: 800 },
+  { page: 'start.html', action: 'addLogEntry', bubble: 'Ich schreibe einen kurzen Log.', scroll: 0 },
+  { page: 'start.html', action: 'showRouteInsteadOfLike', bubble: 'Ich öffne eine gespeicherte Route.', scroll: 800 },
   { page: 'start.html', action: 'showRoute', bubble: 'Ich zeige eine gespeicherte Route.', scroll: 300 },
-
-  // Plan
   { page: 'plan.html', action: 'planAndSaveRoute', bubble: 'Ich plane und speichere eine neue Tour.', scroll: 0 },
   { page: 'plan.html', action: 'showPlannedRoute', bubble: 'Ich zeige die geplante Tour an.', scroll: 0 },
-
-  // Profil
   { page: 'profile.html', action: 'openSettings', bubble: 'Ich öffne die Einstellungen.', scroll: 0 },
   { page: 'profile.html', action: 'closeSettings', bubble: 'Ich schließe die Einstellungen.', scroll: 0 }
 ];
 
 const actionMap = {
-  addSpot: demoAddSpot,
-  likeLog: demoLikeLog,
+  addLogEntry: demoAddLogEntry,
+  showRouteInsteadOfLike: demoShowRouteInsteadOfLike,
   showRoute: demoShowRoute,
   planAndSaveRoute: demoPlanAndSaveRoute,
   showPlannedRoute: demoShowPlannedRoute,
@@ -190,12 +185,11 @@ const actionMap = {
   closeSettings: demoCloseSettings
 };
 
-let demoStep = 0;            // Aktueller Schritt-Index
-let demoActive = true;       // Autopilot aktiv?
-let userInteracted = false;  // Hat User interagiert?
+let demoStep = 0;
+let demoActive = true;
+let userInteracted = false;
 let inactivityTimeout = null;
 
-// Zeigt Sprechblase mit Text an
 function showBubble(msg) {
   demoBubble.textContent = msg;
   demoBubble.style.display = 'block';
@@ -206,22 +200,18 @@ function showBubble(msg) {
   }, 3200);
 }
 
-// Zeigt Hinweis für Benutzersteuerung an
 function showControlHint() {
   controlHint.textContent = "Du kannst jetzt selber steuern! 😊";
   controlHint.classList.add('visible');
 }
 
-// Versteckt den Steuerungs-Hinweis
 function hideControlHint() {
   controlHint.classList.remove('visible');
 }
 
-// Lädt und führt den aktuellen Demo-Schritt aus
 function runDemoStep() {
   if (!demoActive) return;
   if (demoStep >= demoSteps.length) {
-    // Am Ende angekommen: Demo pausieren, Hinweis zeigen
     demoActive = false;
     showControlHint();
     return;
@@ -245,31 +235,26 @@ function runDemoStep() {
         await new Promise(res => setTimeout(res, 900));
         await actionMap[step.action]();
       } else {
-        // Wenn keine Funktion, sende Nachricht ins iFrame
         iframe.contentWindow.postMessage({ demoAction: step.action }, '*');
       }
 
-      // Signalisiert Schritt beendet
       window.postMessage({ demoDone: true }, '*');
     }, 900);
   };
 }
 
-// Reagiere auf Abschluss eines Demo-Schrittes
 window.addEventListener('message', (e) => {
   if (e.data && e.data.demoDone && demoActive) {
     demoStep++;
     if (demoStep < demoSteps.length) {
       setTimeout(runDemoStep, 7000 + Math.random() * 2000);
     } else {
-      // Am Ende nochmal Steuerungshinweis zeigen
       demoActive = false;
       showControlHint();
     }
   }
 });
 
-// User-Interaktion: pausiert Autopilot
 function onUserInteract() {
   if (userInteracted) return;
   userInteracted = true;
@@ -277,21 +262,17 @@ function onUserInteract() {
   showControlHint();
 
   clearTimeout(inactivityTimeout);
-
-  // Timeout starten, um Autopilot nach 10s Inaktivität fortzusetzen
   inactivityTimeout = setTimeout(() => {
     userInteracted = false;
     demoActive = true;
     hideControlHint();
-    runDemoStep();  // Von aktuellem demoStep weitermachen
+    runDemoStep();
   }, 10000);
 }
 
-// Auf Maus & Tastatur hören (pausieren)
 window.addEventListener('mousemove', onUserInteract, { once: true });
 window.addEventListener('keydown', onUserInteract, { once: true });
 
-// Wenn User schon pausiert, erneute Interaktion Timeout verlängern
 window.addEventListener('mousemove', () => {
   if (!userInteracted) return;
   clearTimeout(inactivityTimeout);
@@ -313,7 +294,6 @@ window.addEventListener('keydown', () => {
   }, 10000);
 });
 
-// Maus-Cursor-Animation für Klicks
 const cursor = document.getElementById('demo-cursor');
 async function clickWithCursor(selector, delay = 400) {
   const el = iframe.contentDocument.querySelector(selector);
@@ -330,51 +310,41 @@ async function clickWithCursor(selector, delay = 400) {
   cursor.style.display = 'block';
 
   await new Promise(res => setTimeout(res, delay));
-
   el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
   await new Promise(res => setTimeout(res, 400));
   cursor.style.display = 'none';
 }
 
-// Alert nur für "Standort nicht verfügbar." unterdrücken
-iframe.contentWindow.alert = function(msg) {
-  if (msg === "Standort nicht verfügbar.") return;
-  window.alert(msg);
-};
+// Neue Aktionen
 
-// Hier jetzt alle Demo-Aktionen definieren
-
-async function demoAddSpot() {
+async function demoAddLogEntry() {
   showBubble('Ich öffne das Plus-Menü...');
   await clickWithCursor('#plus-button', 400);
   await new Promise(res => setTimeout(res, 700));
-  showBubble('Ich wähle "Spot hinzufügen"...');
-  await clickWithCursor('#add-spot', 400);
+
+  showBubble('Ich wähle "Log-Eintrag"...');
+  await clickWithCursor('#add-log', 400);
   await new Promise(res => setTimeout(res, 700));
-  showBubble('Ich wähle die Kategorie "Café"...');
-  let select;
-  for (let i=0; i<20; i++) {
-    select = iframe.contentDocument.querySelector('#quick-spot-category');
-    if (select) break;
-    await new Promise(res => setTimeout(res, 100));
-  }
-  if (select) {
-    select.value = 'Cafe';
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-    await new Promise(res => setTimeout(res, 600));
-  }
-  showBubble('Ich speichere den Spot...');
-  await clickWithCursor('#quick-spot-here', 400);
+
+  showBubble('Ich schreibe einen kurzen Text...');
+  await typeText('#log-text', "Felt truly connected out there today. 🌤️🚴‍♂️", 60);
+  await new Promise(res => setTimeout(res, 500));
+
+  showBubble('Ich speichere den Log...');
+  await clickWithCursor('#submit-log', 400);
   await new Promise(res => setTimeout(res, 900));
 }
 
-async function demoLikeLog() {
-  await smoothScrollTo('.log-list', -60, 1000);
+async function demoShowRouteInsteadOfLike() {
+  await smoothScrollTo('.route-list', -60, 1000);
   await new Promise(res => setTimeout(res, 400));
-  await clickWithCursor('.like-btn', 400);
+
+  showBubble('Ich öffne eine gespeicherte Route...');
+  await clickWithCursor('.show-route-btn', 400);
   await new Promise(res => setTimeout(res, 800));
 }
+
+// Vorhandene Aktionen
 
 async function demoShowRoute() {
   showBubble('Ich öffne gespeicherte Routen...');
@@ -387,7 +357,6 @@ async function demoPlanAndSaveRoute() {
   await clickWithCursor('#plan-route', 400);
   await new Promise(res => setTimeout(res, 800));
   showBubble('Ich plane die Route...');
-  // Beispiel: Text eintippen
   await typeText('#route-name', 'Abenteuer-Tour');
   await new Promise(res => setTimeout(res, 600));
   showBubble('Ich speichere die Route...');
@@ -413,7 +382,6 @@ async function demoCloseSettings() {
   await new Promise(res => setTimeout(res, 600));
 }
 
-// Beispiel: Text eintippen Funktion
 async function typeText(selector, text, delay = 80) {
   const el = iframe.contentDocument.querySelector(selector);
   if (!el) return;
@@ -426,7 +394,6 @@ async function typeText(selector, text, delay = 80) {
   }
 }
 
-// Sanft scrollen
 async function smoothScrollTo(selector, offset = 0, duration = 800) {
   const el = iframe.contentDocument.querySelector(selector);
   if (!el) return;
@@ -442,9 +409,9 @@ async function smoothScrollTo(selector, offset = 0, duration = 800) {
   }
 }
 
-// Demo starten
 runDemoStep();
 </script>
+
 
 </body>
 </html>
