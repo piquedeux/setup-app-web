@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", () => {
 // Leaflet Map Setup
 const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: ''
@@ -589,14 +590,32 @@ let logs = [
   {
     author: "Anna",
     date: "2025-07-04 09:12",
-    content: "Heute eine richtig schöne Tour durch den Spreewald gemacht! Das Wetter war super und wir haben viele nette Leute getroffen. 🌳🚴‍♂️🌞 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, eu consectetur nisl nisi euismod nisi.",
+    content: "Had such a wonderful ride through the Spreewald today! The weather was absolutely perfect and we met so many kind people along the way. 🌳🚴‍♂️🌞 Stopped for lunch by the river and enjoyed the peaceful scenery. It’s days like these that remind me why I love cycling so much. Totally recommend the route for anyone looking for a mix of nature and adventure!",
     likes: 2
   },
   {
-    author: "Moritz",
-    date: "2025-07-03 18:44",
-    content: "Kurzer Regenschauer, aber die Stimmung war trotzdem top! Danke an alle Mitfahrer:innen. 🚴‍♀️🌧️",
-    likes: 1
+    author: "Lena",
+    date: "2025-07-05 17:28",
+    content: "Explored the Brandenburg lake district today and it was breathtaking! The trail took us past shimmering lakes, dense forests, and through a few quiet villages. Even caught a glimpse of a deer near the path. Took plenty of breaks and enjoyed some local snacks. Can’t wait to do this route again with more friends next time!",
+    likes: 3
+  },
+  {
+    author: "Jakob",
+    date: "2025-07-06 14:52",
+    content: "What an adventure! Rode from Berlin to the outskirts of Potsdam and back. The heat was intense but the scenery made up for it. Found a small bakery hidden in a village that served the best apple strudel I’ve ever had. Got a flat tire halfway through, but a kind passerby helped me out. A great day on the bike overall!",
+    likes: 4
+  },
+  {
+    author: "Nora",
+    date: "2025-07-07 10:19",
+    content: "Joined a group ride through the Havelland region today and it turned into one of the best tours I’ve done so far! We cycled through sunflower fields, had coffee at a lovely old train station café, and shared stories with fellow riders. Such an inspiring group of people. Already looking forward to the next meetup!",
+    likes: 5
+  },
+  {
+    author: "Tim",
+    date: "2025-07-08 15:35",
+    content: "Took the long route along the Oder river and wow—what a ride. Beautiful landscapes, a calm breeze, and that golden hour glow towards the end made it unforgettable. Met a fellow cyclist from Denmark and we ended up riding together for a while. Moments like this make solo travel feel much less lonely.",
+    likes: 3
   }
 ];
 
@@ -749,3 +768,5 @@ function scrollToMap() {
     mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
+
+});
