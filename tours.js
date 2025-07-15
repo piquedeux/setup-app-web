@@ -623,26 +623,27 @@ let logsShown = 2;
 function renderLogs() {
   const logList = document.getElementById('log-list');
   logList.innerHTML = '';
-  logs.slice(0, logsShown).forEach((log, idx) => {
-    // Always assign a demo route if missing
+
+  const maxLen = 180;
+  logs.slice(0, logsShown).forEach((log) => {
     if (!log.routeId && savedTours.length) {
       log.routeId = savedTours[Math.floor(Math.random() * savedTours.length)].id;
     }
     const entry = document.createElement('div');
     entry.className = 'log-entry';
-    const maxLen = 180;
+    
     const isLong = log.content.length > maxLen;
     const shortText = isLong ? log.content.slice(0, maxLen) + '…' : log.content;
     const contentHtml = isLong
       ? `<span class="content">${shortText}</span> <span class="toggle-btn">Show more</span>`
       : `<span class="content">${log.content}</span>`;
-
-    // Format date European style
-    let dateObj = new Date(log.date);
-    let dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+    
+    // Datum schön formatieren
+    const dateObj = new Date(log.date);
+    const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
       ' ' +
       dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-
+    
     entry.innerHTML = `
       <div class="author">
         <a href="/profile.html?user=${encodeURIComponent(log.author)}" class="profile-link">${log.author}</a>
@@ -651,22 +652,24 @@ function renderLogs() {
       ${contentHtml}
       <button class="show-route-btn">Show route</button>
     `;
+    
     if (isLong) {
       const toggle = entry.querySelector('.toggle-btn');
-      const contentDiv = entry.querySelector('.content');
+      const contentSpan = entry.querySelector('.content');
       toggle.onclick = () => {
         if (toggle.textContent === "Show more") {
-          contentDiv.textContent = log.content;
+          contentSpan.textContent = log.content;
           toggle.textContent = "Show less";
           entry.classList.add('expanded');
         } else {
-          contentDiv.textContent = shortText;
+          contentSpan.textContent = shortText;
           toggle.textContent = "Show more";
           entry.classList.remove('expanded');
         }
       };
     }
-    // Show route button functionality
+    
+    // Show route Button
     const showRouteBtn = entry.querySelector('.show-route-btn');
     showRouteBtn.onclick = () => {
       scrollToMap();
@@ -678,12 +681,26 @@ function renderLogs() {
         document.querySelector(`.show-route-btn[data-tour="${randomTour.id}"]`)?.click();
       }
     };
+
     logList.appendChild(entry);
   });
-  document.getElementById('load-more-logs').style.display = logsShown < logs.length ? 'block' : 'none';
+
+  // Buttons anzeigen / verstecken
+  const loadMoreBtn = document.getElementById('load-more-logs');
+  const showLessBtn = document.getElementById('show-less-logs');
+
+  loadMoreBtn.style.display = logsShown < logs.length ? 'inline-block' : 'none';
+  showLessBtn.style.display = logsShown > 2 ? 'inline-block' : 'none';
 }
-document.getElementById('load-more-logs').onclick = () => {
-  logsShown += 3;
+
+  document.getElementById('load-more-logs').onclick = () => {
+  logsShown += 3; // Oder beliebige Anzahl zum Nachladen
+  if (logsShown > logs.length) logsShown = logs.length;
+  renderLogs();
+};
+
+document.getElementById('show-less-logs').onclick = () => {
+  logsShown = 2;
   renderLogs();
 };
 
