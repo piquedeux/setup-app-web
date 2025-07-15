@@ -716,7 +716,7 @@ main {
   cursor: pointer;
   background-color: transparent;
   border: none;
-  color: #007bff;
+  color: var(--color-primary);
   font-weight: 600;
   font-size: 0.9em;
   user-select: none;
