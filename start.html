@@ -23,8 +23,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Kosugi&family=Kosugi+Maru&display=swap" rel="stylesheet">
 <link href="styles.css" rel="stylesheet">
-<link href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" rel="stylesheet" />
-<link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.2/maptiler-sdk.css" rel="stylesheet" />
+ <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- MapTiler for Leaflet -->
+  <script src="https://unpkg.com/@maptiler/leaflet-maptiler-layer/dist/leaflet-maptiler-layer.js"></script>
+
+  <!-- Leaflet CSS -->
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
 </head>
 <body>
 
@@ -68,9 +74,9 @@
   <a href="/teral/plan.html">Plan</a>
   <a href="/teral/profile.html">Profile</a>
 </nav>
-<script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.1.2/maptiler-sdk.umd.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
 <script src="tours.js"></script>
+
 <script>
 window.addEventListener('message', async (event) => {
   if (!event.data || !event.data.demoAction) return;
