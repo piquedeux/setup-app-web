@@ -83,6 +83,7 @@
     document.getElementById('profile-fitness').textContent = profile.fitness || '';
     document.getElementById('profile-sleep').textContent = profile.sleep || '';
     document.getElementById('profile-region').textContent = profile.region || '';
+    document.getElementById('user-interests').textContent = profile.interests;
     if (profile.photo) {
       const img = document.getElementById('profile-pic');
       img.src = profile.photo;
