@@ -1,6 +1,6 @@
 :root {
-  --color-bg: #fff;
-  --color-text: #000;
+  --color-bg: #f5f5f0;
+  --color-text: #2f2f2f;
   --color-primary: #2e8b57;
 
   --font-primary: 'Inter Tight', Arial Rounded, sans-serif;
@@ -531,15 +531,15 @@ main {
 }
 
 .diary-section {
-  padding: 2em;
+  padding: 1em;
   margin-bottom: 4em;
 }
 
 .diary-section h3 {
   font-size: 1.5em;
-  color: var(--color-primary);
+  color: var(--color-text);
   margin-bottom: 1em;
-  padding-left: 1em;
+  padding-left: 10px;
   font-family: var(--font-primary);
 }
 
