@@ -33,6 +33,36 @@ document.addEventListener("DOMContentLoaded", () => {
     customMaptiler = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'); // Fallback
   }
 
+let myLocationMarker = null;
+
+// Track user's current location
+if (navigator.geolocation) {
+  navigator.geolocation.watchPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    if (myLocationMarker) {
+      myLocationMarker.setLatLng([lat, lng]);
+    } else {
+      myLocationMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'my-location-icon',
+          html: '<div style="width:18px;height:18px;border-radius:50%;background:#007aff;border:2px solid white;box-shadow:0 0 8px rgba(0,0,0,0.4);"></div>',
+          iconSize: [18, 18],
+          iconAnchor: [9, 9]
+        })
+      }).addTo(map).bindPopup("You are here");
+    }
+  }, err => {
+    console.warn("Location access denied or unavailable", err);
+  }, {
+    enableHighAccuracy: true,
+    maximumAge: 10000
+  });
+} else {
+  alert("Geolocation is not supported by your browser.");
+}
+
   // Map Setup
   const map = L.map('map', {
     center: [52.52, 13.3],
