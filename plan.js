@@ -25,7 +25,7 @@ growBtn.onclick = function() {
   growBtn.classList.toggle('sticky', grown);
   growBtn.innerText = grown ? "↑" : "↓";
   growBtn.title = grown ? "Karte wieder einklappen" : "Karte nach unten ausklappen";
-  setTimeout(() => map.invalidateSize(), 400);
+  setTimeout(() => map.invalidateSize(), 600);
 };
 
 
