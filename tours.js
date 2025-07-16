@@ -51,16 +51,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Spot Icons & Categories
   const spotIconMap = {
-    "Wasserstelle": "water.svg",
-    "Rastplatz": "restingspot.svg",
-    "Toilette": "toilet.svg",
-    "Cafe": "coffee.svg",
-    "Werkstatt": "workshop.svg",
-    "Pub": "bar.svg", // Assuming 'Kneipe' maps to 'Pub'
-    "Krankenhaus": "hospital.svg",
+    "Water": "water.svg",
+    "Restingspot": "restingspot.svg",
+    "Public Toilet": "toilet.svg",
+    "Coffee": "coffee.svg",
+    "Workshop": "workshop.svg",
+    "Pub": "bar.svg",
+    "Hospital": "hospital.svg",
     "Briefkasten": "postoffice.svg",
     "Restaurant": "restaurant.svg",
-    // Adding other SVGs that aren't explicitly in spotCategories but might be used
     "Camping": "camping.svg",
     "Great View": "greatview.svg",
     "Shelter": "shelter.svg",
