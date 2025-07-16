@@ -531,8 +531,7 @@ main {
 }
 
 .diary-section {
-  padding: 2em;
-  margin-bottom: 4em;
+  margin-bottom: 2em;
 }
 
 .diary-section h3 {
@@ -548,7 +547,7 @@ main {
   gap: 1em;
   list-style: none !important;
   padding: 0;
-  margin-left: 3em;
+  margin-left: 0.6em;
 }
 
 .quick-overlay {
