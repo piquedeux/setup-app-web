@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // SVG Icon Helper Function
   const getSvgIconHtml = (svgFileName, size = 32, color = 'currentColor') => {
     // Assuming icons are in a folder named 'icon-set' at the root
-    return `<img src="/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); color:${color};" alt="${svgFileName.split('.')[0]}">`;
+    return `<img src="/teral/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); color:${color};" alt="${svgFileName.split('.')[0]}">`;
   };
 
   // Leaflet Map Setup
@@ -34,10 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Map Setup
-  // Initial center and zoom can be global, clustering handles dense areas
   const map = L.map('map', {
-    center: [0, 0], // Start centered globally
-    zoom: 2,       // Low zoom to show global view
+    center: [52.52, 13.3],
+    zoom: 10,
     layers: [customMaptiler]
   });
   window.map = map;
@@ -50,10 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "Street map": osm
   }).addTo(map);
 
-  // --- Marker Clustering Setup ---
-  const markers = L.markerClusterGroup();
-  map.addLayer(markers);
-
   // Spot Icons & Categories
   const spotIconMap = {
     "Wasserstelle": "water.svg",
@@ -61,136 +56,153 @@ document.addEventListener("DOMContentLoaded", () => {
     "Toilette": "toilet.svg",
     "Cafe": "coffee.svg",
     "Werkstatt": "workshop.svg",
-    "Pub": "bar.svg",
+    "Pub": "bar.svg", // Assuming 'Kneipe' maps to 'Pub'
     "Krankenhaus": "hospital.svg",
     "Briefkasten": "postoffice.svg",
     "Restaurant": "restaurant.svg",
+    // Adding other SVGs that aren't explicitly in spotCategories but might be used
     "Camping": "camping.svg",
     "Great View": "greatview.svg",
     "Shelter": "shelter.svg",
     "Sleep Spot": "sleepspot.svg",
   };
 
-  const spotCategories = Object.keys(spotIconMap);
+  const spotCategories = Object.keys(spotIconMap); // Use keys from the map for categories
 
   const spots = [];
-  // Distribute spots globally
-  for (let i = 0; i < 2000; i++) { // Increased number of spots for better global demonstration
-    const lat = (Math.random() * 180) - 90; // -90 to +90
-    const lng = (Math.random() * 360) - 180; // -180 to +180
+  for (let i = 0; i < 200; i++) {
+    const lat = 52.4 + Math.random() * 0.4; // Berlin-Umgebung
+    const lng = 13.1 + Math.random() * 0.6;
     const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
-    const svgFileName = spotIconMap[category] || 'X.svg';
-    const spot = {
+    const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
+    spots.push({
       lat,
       lng,
       info: `${category} #${i + 1}`,
       svg: svgFileName,
-      category: category,
-      id: `spot-${i}` // Added unique ID for tracking
-    };
-    spots.push(spot);
-    // Add marker directly to the cluster group
-    spot.marker = L.marker([spot.lat, spot.lng], { icon: L.divIcon({
-      className: 'custom-div-icon',
-      html: getSvgIconHtml(spot.svg, 28),
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
-      popupAnchor: [0, -14]
-    })}).bindPopup(spot.info);
-    markers.addLayer(spot.marker);
+      category: category
+    });
   }
+
+  const spotIcon = (svgFileName) => L.divIcon({
+    className: 'custom-div-icon', // Added class for potential CSS styling
+    html: getSvgIconHtml(svgFileName, 28),
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -14]
+  });
+
+  spots.forEach(s => {
+    s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
+  });
 
   // Fahrer generieren & Icons
   const directions = [
-    [0.00015, 0],
-    [-0.00015, 0],
-    [0, 0.00015],
-    [0, -0.00015],
-    [0.0001, 0.0001],
-    [0.0001, -0.0001],
-    [-0.0001, 0.0001],
-    [-0.0001, -0.0001]
+    [0.00015, 0],       // Norden
+    [-0.00015, 0],      // Süden
+    [0, 0.00015],       // Osten
+    [0, -0.00015],      // Westen
+    [0.0001, 0.0001],   // Nordost
+    [0.0001, -0.0001],  // Nordwest
+    [-0.0001, 0.0001],  // Südost
+    [-0.0001, -0.0001]  // Südwest
   ];
   const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
-  const riders = [];
-  // 50 additional riders distributed globally
-  for (let i = 0; i < 50; i++) {
-    const lat = (Math.random() * 180) - 90;
-    const lng = (Math.random() * 360) - 180;
+  const riders = [
+    { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
+    { id: 'Anna', pos: [52.53, 13.35], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
+    { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
+  ];
+  // 30 weitere Fahrer mit Zufallsdaten
+  for (let i = 0; i < 30; i++) {
+    const lat = 52.4 + Math.random() * 0.4;
+    const lng = 13.1 + Math.random() * 0.6;
     const color = riderColors[i % riderColors.length];
     const dir = directions[i % directions.length];
-    const rider = {
-      id: `Rider${i + 1}`,
+    riders.push({
+      id: `Fahrer${i + 1}`,
       pos: [lat, lng],
       color,
       speed: 0.00008 + Math.random() * 0.00012,
       dir
-    };
-    riders.push(rider);
-    rider.marker = L.marker(rider.pos, { icon: L.divIcon({
-      className: 'rider-div-icon',
-      html: getSvgIconHtml('rider.svg', 32, color),
-      iconSize: [36, 36],
-      iconAnchor: [18, 18],
-      popupAnchor: [0, -18]
-    })}).bindPopup(`<b>${rider.id}</b><br>Speed: ${(rider.speed * 100000).toFixed(2)} km/h`); // Added direct popup for riders
-    markers.addLayer(rider.marker); // Add rider markers to the cluster group
+    });
   }
 
-  // Fahrer bewegen (Loop) - Movement will now be global
+  const riderIcon = (color) => L.divIcon({
+    className: 'rider-div-icon',
+    html: getSvgIconHtml('rider.svg', 32, color), // Use rider.svg
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18]
+  });
+
+  riders.forEach(rider => {
+    rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
+  });
+
+  // Fahrer Popup mit Route anzeigen
+  riders.forEach(rider => {
+    rider.marker.on('click', () => {
+      const profileLink = `<a href="/profile.html?user=${encodeURIComponent(rider.id)}" class="profile-link" target="_blank">${rider.id}</a>`;
+      rider.marker.bindPopup(`
+        <b>${profileLink}</b><br>
+        Geschwindigkeit: ${(rider.speed * 100000).toFixed(2)} km/h<br>
+        `).openPopup();
+    });
+  });
+
+  // Fahrer bewegen (Loop)
   function moveRiders() {
     riders.forEach(rider => {
       let { lat, lng } = rider.marker.getLatLng();
-      lat += rider.dir[0] * rider.speed * 5000; // Increased movement factor
-      lng += rider.dir[1] * rider.speed * 5000; // Increased movement factor
-
-      // Wrap around the globe
-      if (lat > 90) lat = -90 + (lat - 90);
-      if (lat < -90) lat = 90 + (lat + 90);
-      if (lng > 180) lng = -180 + (lng - 180);
-      if (lng < -180) lng = 180 + (lng + 180);
-      
+      lat += rider.speed;
+      if (lat > 52.8) lat = 52.4;
       rider.marker.setLatLng([lat, lng]);
     });
   }
-  setInterval(moveRiders, 1000); // Slower interval for better global visualization
+  setInterval(moveRiders, 700);
 
   // --- ORS API Key ---
   const ORS_API_KEY = '5b3ce3597851110001cf6248263492386e3d40628c7dbf37a20f27f2';
 
   // --- Spots + Touren im LocalStorage ---
-  // Dummy data for savedTours (can be merged with actual data if loaded from localStorage)
   let savedTours = [
     {
-      id: "tour-js-1", // Added unique ID for JS-generated tours
+      id: 1,
       name: "Tour Berlin → Ostsee",
       days: 5,
       creator: "Moritz",
       multiDay: true,
-      startCoords: [52.52508, 13.3694],
-      endCoords: [54.0887, 12.1405]
+      // Berlin Hbf
+      startCoords: [52.52508, 13.3694], // [lat, lng]
+      // Rostock Hbf
+      endCoords: [54.0887, 12.1405]      // [lat, lng]
     },
     {
-      id: "tour-js-2",
+      id: 2,
       name: "Rundkurs Spreewald",
       days: 3,
       creator: "Anna",
       multiDay: false,
+      // Lübbenau
       startCoords: [51.8686, 13.9601],
+      // Cottbus
       endCoords: [51.7563, 14.3329]
     },
     {
-      id: "tour-js-3",
+      id: 3,
       name: "Brandenburg Seenplatte",
       days: 4,
       creator: "Tom",
       multiDay: true,
+      // Brandenburg an der Havel
       startCoords: [52.4167, 12.5500],
+      // Rheinsberg
       endCoords: [53.0981, 12.8927]
     }
   ];
 
-  // --- Helper: Find Spot by Id ---
+  // --- Helfer: Spot per Id finden ---
   function getSpotById(id) {
     return spots.find(s => s.id === id || s.name === id);
   }
@@ -204,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  // --- Get Route from ORS ---
+  // --- Route von ORS holen ---
   async function getRouteFromORS(start, waypoints, end) {
     const coords = [
       [start[1], start[0]],
@@ -225,14 +237,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRouteLayer = null;
   let currentRouteMarkers = [];
 
-  // --- Display Route ---
+  // --- Route anzeigen ---
   function displayRoute(routeData, waypoints) {
     if (currentRouteLayer) map.removeLayer(currentRouteLayer);
     currentRouteMarkers.forEach(m => map.removeLayer(m));
     currentRouteMarkers = [];
 
     if (!routeData || !routeData.features || !routeData.features[0]) {
-      alert("No route found!");
+      alert("Keine Route gefunden!");
       return;
     }
     const coords = routeData.features[0].geometry.coordinates.map(c => [c[1], c[0]]);
@@ -247,18 +259,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }).addTo(map).bindPopup("Start")
     );
 
-    // Marker Target X
+    // Marker Ziel X
     currentRouteMarkers.push(
       L.marker(coords[coords.length - 1], {
         icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
-      }).addTo(map).bindPopup("Target")
+      }).addTo(map).bindPopup("Ziel")
     );
 
-    // Marker Waypoints X
+    // Marker Zwischenstopps X
     waypoints.forEach((wp, i) => {
       L.marker(wp, {
         icon: L.divIcon({ className: '', html: '<span style="font-size: 24px;">X</span>', iconSize: [24, 24] })
-      }).addTo(map).bindPopup(`Waypoint ${i + 1}`);
+      }).addTo(map).bindPopup(`Zwischenstopp ${i + 1}`);
     });
 
     map.fitBounds(coords);
@@ -266,26 +278,20 @@ document.addEventListener("DOMContentLoaded", () => {
     return summary;
   }
 
-  // --- Update Tour Feed (MODIFIED TO APPEND) ---
-  const renderedTourIds = new Set(); // Keep track of already rendered tours
-
+  // --- Touren Feed aktualisieren ---
   async function updateTourFeed() {
     const tourList = document.getElementById('tour-list');
     if (!tourList) return;
 
-    // Iterate over savedTours and append only if not already rendered
-    for (const tour of savedTours) {
-      if (renderedTourIds.has(tour.id)) {
-        continue; // Skip if already added by JS
-      }
+    tourList.innerHTML = '';
 
+    for (const tour of savedTours) {
       const div = document.createElement('div');
       div.classList.add('tour-item');
-      div.dataset.tourId = tour.id; // Add data attribute to identify this JS-generated tour
 
       let meetingPointText = '';
       if (tour.meetingPoint) {
-        meetingPointText = `<br>📌 Meeting Point: ${tour.meetingPoint.name}`;
+        meetingPointText = `<br>📌 Treffpunkt: ${tour.meetingPoint.name}`;
       }
 
       div.innerHTML = `
@@ -299,12 +305,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="route-info" id="route-info-${tour.id}" style="font-size:0.9em; color:#666; margin-top:0.3em;"></div>
       `;
 
-      // Event Listeners (same as before)
+      // Mitfahren
       div.querySelector('.join-tour-btn').addEventListener('click', e => {
         e.stopPropagation();
         showJoinHint(tour.name, tour.creator);
       });
 
+      // Treffpunkt setzen
       div.querySelector('.set-meeting-point').addEventListener('click', async e => {
         e.stopPropagation();
         quickOverlayContent.innerHTML = `
@@ -316,6 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         quickOverlay.style.display = 'flex';
 
+        // Live Adressvorschläge
         const input = document.getElementById('meeting-search');
         const suggestions = document.getElementById('meeting-suggestions');
         input.oninput = async function() {
@@ -340,6 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
 
+        // Karte auswählen
         document.getElementById('meeting-map-pick').onclick = () => {
           quickOverlay.style.display = 'none';
           map.once('click', e => {
@@ -348,24 +357,26 @@ document.addEventListener("DOMContentLoaded", () => {
           map.getContainer().style.cursor = "crosshair";
         };
 
+        // Abbrechen
         document.getElementById('meeting-cancel').onclick = () => quickOverlay.style.display = 'none';
 
-        let meetingMarkers = [];
+        let meetingMarkers = []; // Define meetingMarkers within the scope
         function selectMeeting(coords, name) {
           tour.meetingPoint = { name, coord: coords };
           meetingMarkers.forEach(m => map.removeLayer(m));
           meetingMarkers = [];
-          const marker = L.marker(coords, { icon: L.divIcon({ className: '', html: '<span style="font-size: 24px;">X</span>', iconSize: [24, 24] }) })
+          const marker = L.marker(coords, { icon: L.divIcon({ className: '', html: getSvgIconHtml('X.svg', 24) }) }) // Use X.svg for meeting point
             .addTo(map)
-            .bindPopup(`Meeting Point: ${name}`)
+            .bindPopup(`Treffpunkt: ${name}`)
             .openPopup();
           meetingMarkers.push(marker);
           quickOverlay.style.display = 'none';
-          updateTourFeed(); // Re-render to update meeting point text
+          updateTourFeed();
           map.getContainer().style.cursor = "";
         }
       });
 
+      // Route anzeigen
       div.querySelector('.show-route-btn').addEventListener('click', async e => {
         e.stopPropagation();
         scrollToMap();
@@ -374,13 +385,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const endCoords = tour.endCoords;
 
         if (!startCoords || !endCoords) {
-          alert("Start or destination not available!");
+          alert("Start oder Ziel nicht verfügbar!");
           return;
         }
 
         const coordinates = [
-          [startCoords[1], startCoords[0]],
-          [endCoords[1], endCoords[0]]
+          [startCoords[1], startCoords[0]], // [lng, lat]
+          [endCoords[1], endCoords[0]]      // [lng, lat]
         ];
         const url = `https://api.openrouteservice.org/v2/directions/cycling-regular/geojson?api_key=${ORS_API_KEY}`;
         const body = { coordinates };
@@ -393,16 +404,17 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           data = await res.json();
         } catch (err) {
-          alert("Error loading route: " + err);
+          alert("Fehler beim Laden der Route: " + err);
           return;
         }
 
         if (!data || !data.features || !data.features[0]) {
-          alert("Route could not be loaded. (ORS error)");
+          alert("Route konnte nicht geladen werden. (ORS-Fehler)");
           console.log("ORS response:", data);
           return;
         }
 
+        // Vorherige Route und Marker entfernen
         if (currentRouteLayer) map.removeLayer(currentRouteLayer);
         currentRouteMarkers.forEach(m => map.removeLayer(m));
         currentRouteMarkers = [];
@@ -412,28 +424,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentRouteLayer = L.polyline(coords, { color: 'black', weight: 3 }).addTo(map);
 
+        // Start Marker X
         currentRouteMarkers.push(
           L.marker(coords[0], {
             icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
           }).addTo(map).bindPopup("Start")
         );
 
+        // Ziel Marker X
         currentRouteMarkers.push(
           L.marker(coords[coords.length - 1], {
             icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
-          }).addTo(map).bindPopup("Target")
+          }).addTo(map).bindPopup("Ziel")
         );
 
         map.fitBounds(coords);
 
+        // Distanz & Dauer anzeigen
         const infoDiv = document.getElementById(`route-info-${tour.id}`);
         if (summary) {
-          infoDiv.innerHTML = `Length: ${(summary.distance / 1000).toFixed(1)} km &nbsp; | &nbsp; Duration: ${(summary.duration / 3600).toFixed(1)} h`;
+          infoDiv.innerHTML = `Länge: ${(summary.distance / 1000).toFixed(1)} km &nbsp; | &nbsp; Dauer: ${(summary.duration / 3600).toFixed(1)} h`;
         }
       });
 
       tourList.appendChild(div);
-      renderedTourIds.add(tour.id); // Mark this tour as rendered
     }
   }
 
@@ -444,16 +458,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const quickOverlay = document.getElementById('quick-overlay');
   const quickOverlayContent = document.getElementById('quick-overlay-content');
 
+  // Menü öffnen/schließen
   plusBtn.addEventListener('click', () => {
     plusMenu.style.display = plusMenu.style.display === 'flex' ? 'none' : 'flex';
   });
 
+  // Overlay schließen bei Klick außerhalb
   quickOverlay.addEventListener('mousedown', (e) => {
     if (e.target === quickOverlay) {
       quickOverlay.style.display = 'none';
     }
   });
 
+  // Schnell Spot hinzufügen Overlay
   document.getElementById('add-spot').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     const categoryOptions = Object.keys(spotIconMap).map(cat => `<option value="${cat}">${cat}</option>`).join('');
@@ -480,27 +497,28 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('quick-spot-here').onclick = () => {
       const category = document.getElementById('quick-spot-category').value;
       if (!category) {
-        alert("Please select a category!");
+        alert("Bitte eine Kategorie wählen!");
         return;
       }
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(pos) {
           addQuickSpot(category, pos.coords.latitude, pos.coords.longitude);
         }, function() {
-          alert("Location not available.");
+          alert("Standort nicht verfügbar.");
         });
       } else {
-        alert("Location not available.");
+        alert("Standort nicht verfügbar.");
       }
       quickOverlay.style.display = 'none';
     };
   });
 
+  // Schnell Route planen Overlay
   document.getElementById('start-plan').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     quickOverlayContent.innerHTML = `
-      <h4>Quick Route Plan</h4>
-      <input id="quick-dest" type="text" placeholder="Address or Coordinates" required>
+      <h4>Schnell Route planen</h4>
+      <input id="quick-dest" type="text" placeholder="Adresse oder Koordinaten" required>
       <div id="quick-dest-suggestions" class="suggestions"></div>
       <button id="quick-dest-map-pick" type="button">Pick on map</button>
       <div class="quick-form-actions">
@@ -511,6 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     quickOverlay.style.display = 'flex';
 
+    // Live Adressvorschläge
     const input = document.getElementById('quick-dest');
     const suggestions = document.getElementById('quick-dest-suggestions');
     let destCoords = null;
@@ -541,11 +560,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    // Karte auswählen
     document.getElementById('quick-dest-map-pick').onclick = () => {
       quickOverlay.style.display = 'none';
       map.once('click', e => {
         destCoords = [e.latlng.lat, e.latlng.lng];
-        alert(`Route to target point (${e.latlng.lat.toFixed(5)},${e.latlng.lng.toFixed(5)}) will be planned (Demo).`);
+        alert(`Route zum Zielpunkt (${e.latlng.lat.toFixed(5)},${e.latlng.lng.toFixed(5)}) wird geplant (Demo).`);
         map.getContainer().style.cursor = "";
       });
       map.getContainer().style.cursor = "crosshair";
@@ -558,36 +578,28 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     document.getElementById('quick-route-plan').onclick = () => {
       if (!destCoords) {
-        alert("Please select target coordinates or address!");
+        alert("Bitte Zielkoordinaten oder Adresse wählen!");
         return;
       }
-      alert("Route to target point will be planned (Demo).");
+      alert("Route zum Zielpunkt wird geplant (Demo).");
       quickOverlay.style.display = 'none';
     };
   });
 
   function addQuickSpot(category, lat, lng) {
-    const svgFileName = spotIconMap[category] || 'X.svg';
+    const svgFileName = spotIconMap[category] || 'X.svg'; // Get SVG filename for the category
     const info = `${category}`;
-    if (typeof spots !== "undefined" && typeof map !== "undefined") {
-      const newSpot = { lat, lng, info, svg: svgFileName, category, id: `spot-quick-${Date.now()}` }; // Unique ID for quick spots
-      spots.push(newSpot);
-      const marker = L.marker([lat, lng], { icon: L.divIcon({
-        className: 'custom-div-icon',
-        html: getSvgIconHtml(svgFileName, 28),
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-        popupAnchor: [0, -14]
-      })}).bindPopup(info);
-      markers.addLayer(marker); // Add new spot to the cluster group
+    if (typeof spots !== "undefined" && typeof map !== "undefined" && typeof spotIcon === "function") {
+      spots.push({ lat, lng, info, svg: svgFileName, category });
+      const marker = L.marker([lat, lng], { icon: spotIcon(svgFileName) }).addTo(map).bindPopup(info);
       map.setView([lat, lng], 16);
       marker.openPopup();
     }
   }
-
+  // Event für Mitfahrer-Finder Button
   document.getElementById('find-partners').addEventListener('click', () => {
     if (typeof map === "undefined" || typeof riders === "undefined") {
-      alert("Map or rider data not yet loaded.");
+      alert("Karte oder Mitfahrer-Daten sind noch nicht geladen.");
       return;
     }
 
@@ -595,72 +607,58 @@ document.addEventListener("DOMContentLoaded", () => {
     const nearby = riders.filter(r => {
       const pos = r.marker.getLatLng();
       const dist = map.distance([myPos.lat, myPos.lng], [pos.lat, pos.lng]);
-      return dist < 500000; // Increased radius for global context (500km)
+      return dist < 5000; // 5 km Radius
     });
 
-    alert(`${nearby.length} Riders nearby. Send them a request`);
+    alert(`${nearby.length} Drivers nearby. Send them a request`);
   });
 
-  // Dummy data for logs (can be merged with actual data if loaded from localStorage)
+  // --- Demo Log-Daten ---
   let logs = [
     {
       author: "Anna",
       date: "2025-07-04 09:12",
       content: "Had such a wonderful ride through the Spreewald today! The weather was absolutely perfect and we met so many kind people along the way. 🌳🚴‍♂️🌞 Stopped for lunch by the river and enjoyed the peaceful scenery. It’s days like these that remind me why I love cycling so much. Totally recommend the route for anyone looking for a mix of nature and adventure!",
-      likes: 2,
-      id: "log-js-1" // Added unique ID for JS-generated logs
+      likes: 2
     },
     {
       author: "Lena",
       date: "2025-07-05 17:28",
       content: "Explored the Brandenburg lake district today and it was breathtaking! The trail took us past shimmering lakes, dense forests, and through a few quiet villages. Even caught a glimpse of a deer near the path. Took plenty of breaks and enjoyed some local snacks. Can’t wait to do this route again with more friends next time!",
-      likes: 3,
-      id: "log-js-2"
+      likes: 3
     },
     {
       author: "Jakob",
       date: "2025-07-06 14:52",
       content: "What an adventure! Rode from Berlin to the outskirts of Potsdam and back. The heat was intense but the scenery made up for it. Found a small bakery hidden in a village that served the best apple strudel I’ve ever had. Got a flat tire halfway through, but a kind passerby helped me out. A great day on the bike overall!",
-      likes: 4,
-      id: "log-js-3"
+      likes: 4
     },
     {
       author: "Nora",
       date: "2025-07-07 10:19",
       content: "Joined a group ride through the Havelland region today and it turned into one of the best tours I’ve done so far! We cycled through sunflower fields, had coffee at a lovely old train station café, and shared stories with fellow riders. Such an inspiring group of people. Already looking forward to the next meetup!",
-      likes: 5,
-      id: "log-js-4"
+      likes: 5
     },
     {
       author: "Tim",
       date: "2025-07-08 15:35",
       content: "Took the long route along the Oder river and wow—what a ride. Beautiful landscapes, a calm breeze, and that golden hour glow towards the end made it unforgettable. Met a fellow cyclist from Denmark and we ended up riding together for a while. Moments like this make solo travel feel much less lonely.",
-      likes: 3,
-      id: "log-js-5"
+      likes: 3
     }
   ];
 
-  let logsShown = 2; // Initial number of JS logs to show
-
-  const renderedLogIds = new Set(); // Keep track of already rendered logs
-
-  // --- Render Logs (MODIFIED TO APPEND) ---
+  let logsShown = 2;
   function renderLogs() {
     const logList = document.getElementById('log-list');
-    if (!logList) return;
-
-    // Filter to only display logs not yet rendered by JS
-    const logsToRender = logs.filter(log => !renderedLogIds.has(log.id));
+    logList.innerHTML = '';
 
     const maxLen = 180;
-    logsToRender.slice(0, logsShown).forEach((log) => {
+    logs.slice(0, logsShown).forEach((log) => {
       if (!log.routeId && savedTours.length) {
-        // Assign a random tour ID from the JS-generated tours
         log.routeId = savedTours[Math.floor(Math.random() * savedTours.length)].id;
       }
       const entry = document.createElement('div');
       entry.className = 'log-entry';
-      entry.dataset.logId = log.id; // Add data attribute to identify this JS-generated log
 
       const isLong = log.content.length > maxLen;
       const shortText = isLong ? log.content.slice(0, maxLen) + '…' : log.content;
@@ -668,6 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<span class="content">${shortText}</span> <span class="toggle-btn">Show more</span>`
         : `<span class="content">${log.content}</span>`;
 
+      // Datum schön formatieren
       const dateObj = new Date(log.date);
       const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
         ' ' +
@@ -698,25 +697,23 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       }
 
+      // Show route Button
       const showRouteBtn = entry.querySelector('.show-route-btn');
       showRouteBtn.onclick = () => {
         scrollToMap();
-        // Find the corresponding tour based on ID
         const route = savedTours.find(t => t.id === log.routeId);
         if (route) {
-          // Trigger the click event on the dynamically created tour item's button
           document.querySelector(`.show-route-btn[data-tour="${route.id}"]`)?.click();
         } else {
-          // Fallback if no specific route found (e.g., for dummy content)
           const randomTour = savedTours[Math.floor(Math.random() * savedTours.length)];
           document.querySelector(`.show-route-btn[data-tour="${randomTour.id}"]`)?.click();
         }
       };
 
       logList.appendChild(entry);
-      renderedLogIds.add(log.id); // Mark this log as rendered
     });
 
+    // Buttons anzeigen / verstecken
     const loadMoreBtn = document.getElementById('load-more-logs');
     const showLessBtn = document.getElementById('show-less-logs');
 
@@ -725,27 +722,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById('load-more-logs').onclick = () => {
-    logsShown += 3;
+    logsShown += 3; // Oder beliebige Anzahl zum Nachladen
     if (logsShown > logs.length) logsShown = logs.length;
-    renderLogs(); // Call renderLogs again to append more
+    renderLogs();
   };
 
   document.getElementById('show-less-logs').onclick = () => {
     logsShown = 2;
-    // To 'show less', we need to remove the extra JS-added logs
-    const logList = document.getElementById('log-list');
-    if (logList) {
-      // Remove all JS-added logs, then re-render the initial set
-      Array.from(logList.children).forEach(child => {
-        if (child.dataset.logId && logs.some(log => log.id === child.dataset.logId)) {
-          child.remove();
-        }
-      });
-      renderedLogIds.clear(); // Clear the set to allow re-rendering
-      renderLogs();
-    }
+    renderLogs();
   };
 
+  // Log erstellen über Plus-Menü
   document.getElementById('add-log').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     quickOverlayContent.innerHTML = `
@@ -769,19 +756,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const now = new Date();
       const date = now.toISOString();
       const routeId = savedTours[Math.floor(Math.random() * savedTours.length)]?.id;
-      // Add new log to the beginning of the logs array
-      const newLog = { author, date, content, routeId, id: `log-new-${Date.now()}` };
-      logs.unshift(newLog);
+      logs.unshift({ author, date, content, routeId });
       quickOverlay.style.display = 'none';
-      
-      // To show the new log immediately at the top, clear and re-render all logs
-      const logList = document.getElementById('log-list');
-      if(logList) {
-        logList.innerHTML = ''; // Clear all existing (dummy and JS-added)
-        renderedLogIds.clear(); // Reset tracking
-        logsShown = Math.max(logsShown, 3); // Ensure at least 3 are shown if a new one is added
-        renderLogs(); // Re-render from scratch
-      }
+      renderLogs();
     };
   });
 
@@ -805,7 +782,7 @@ document.addEventListener("DOMContentLoaded", () => {
       hint.style.pointerEvents = 'none';
       document.body.appendChild(hint);
     }
-    hint.textContent = `You sent a request to join the tour by "${tourName}". ${creator} received your request, wait until they accept.`;
+    hint.textContent = `You send a request to join the tour by "${tourName}". ${creator} Received your request, wait until he accepts.`;
     hint.style.display = 'block';
     hint.style.opacity = '1';
     setTimeout(() => {
@@ -814,6 +791,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3500);
   }
 
+  // Schließen des Plus-Menüs bei Klick außerhalb
   document.addEventListener('mousedown', (e) => {
     const plusMenu = document.getElementById('plus-menu');
     const plusBtn = document.getElementById('plus-button');
@@ -826,9 +804,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial calls to populate dynamic content, appending to any existing HTML dummy content
-  updateTourFeed();
   renderLogs();
+  updateTourFeed();
 
   function scrollToMap() {
     const mapContainer = document.getElementById('map-container-start') || document.getElementById('map');
