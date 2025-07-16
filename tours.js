@@ -20,7 +20,7 @@ try {
   const key = 'CFkN2tzFRlUROwVG93Cn';
   customMaptiler = L.maptiler.maptilerLayer({
     apiKey: key,
-    style: L.maptiler."0198127a-c9cf-7690-a1af-d08f47d873ca", //custom map
+    style: "https://api.maptiler.com/maps/019812d7-655e-7fb6-bba3-ee3367765bbc/style.json",
   });
 } catch (err) {
   console.error("MapTiler konnte nicht geladen werden:", err);
