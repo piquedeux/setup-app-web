@@ -597,7 +597,7 @@ document.getElementById('find-partners').addEventListener('click', () => {
     return dist < 5000; // 5 km Radius
   });
 
-  alert(`${nearby.length} Mitfahrer:innen in der Nähe gefunden (Demo).`);
+  alert(`${nearby.length} Drivers nearby. Send them a request`);
 });
 
 // --- Demo Log-Daten ---
