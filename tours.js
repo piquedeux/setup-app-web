@@ -168,6 +168,187 @@ const riderIcon = (color) => L.divIcon({
 riders.forEach(rider => {
   rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
 });
+ // Spot Icons & Categories
+  const spotIconMap = {
+    "Water": "water.svg",
+    "Restingspot": "restingspot.svg",
+    "Public Toilet": "toilet.svg",
+    "Coffee": "coffee.svg",
+    "Workshop": "workshop.svg",
+    "Pub": "bar.svg",
+    "Hospital": "hospital.svg",
+    "Briefkasten": "postoffice.svg",
+    "Restaurant": "restaurant.svg",
+    "Camping": "camping.svg",
+    "Great View": "greatview.svg",
+    "Shelter": "shelter.svg",
+    "Sleep Spot": "sleepspot.svg",
+  };
+
+  const spotCategories = Object.keys(spotIconMap); // Use keys from the map for categories
+
+  const spots = [];
+  for (let i = 0; i < 200; i++) {
+    const lat = 52.4 + Math.random() * 0.4; // Berlin-Umgebung
+    const lng = 13.1 + Math.random() * 0.6;
+    const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
+    const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
+    spots.push({
+      lat,
+      lng,
+      info: `${category} #${i + 1}`,
+      svg: svgFileName,
+      category: category
+    });
+  }
+
+  const spotIcon = (svgFileName) => L.divIcon({
+    className: 'custom-div-icon', // Added class for potential CSS styling
+    html: getSvgIconHtml(svgFileName, 28),
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -14]
+  });
+
+  spots.forEach(s => {
+    s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
+  });
+
+  // Fahrer generieren & Icons
+  const directions = [
+    [0.00015, 0],       // Norden
+    [-0.00015, 0],      // Süden
+    [0, 0.00015],       // Osten
+    [0, -0.00015],      // Westen
+    [0.0001, 0.0001],   // Nordost
+    [0.0001, -0.0001],  // Nordwest
+    [-0.0001, 0.0001],  // Südost
+    [-0.0001, -0.0001]  // Südwest
+  ];
+  const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
+  const riders = [
+    { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
+    { id: 'Anna', pos: [52.53, 13.35], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
+    { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
+  ];
+  // 30 weitere Fahrer mit Zufallsdaten
+  for (let i = 0; i < 30; i++) {
+    const lat = 52.4 + Math.random() * 0.4;
+    const lng = 13.1 + Math.random() * 0.6;
+    const color = riderColors[i % riderColors.length];
+    const dir = directions[i % directions.length];
+    riders.push({
+      id: `Fahrer${i + 1}`,
+      pos: [lat, lng],
+      color,
+      speed: 0.00008 + Math.random() * 0.00012,
+      dir
+    });
+  }
+
+  const riderIcon = (color) => L.divIcon({
+    className: 'rider-div-icon',
+    html: getSvgIconHtml('rider.svg', 32, color), // Use rider.svg
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18]
+  });
+
+  riders.forEach(rider => {
+    rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
+  });
+  
+// Spot Icons & Categories
+const spotIconMap = {
+  "Water": "water.svg",
+  "Restingspot": "restingspot.svg",
+  "Public Toilet": "toilet.svg",
+  "Coffee": "coffee.svg",
+  "Workshop": "workshop.svg",
+  "Pub": "bar.svg",
+  "Hospital": "hospital.svg",
+  "Briefkasten": "postoffice.svg",
+  "Restaurant": "restaurant.svg",
+  "Camping": "camping.svg",
+  "Great View": "greatview.svg",
+  "Shelter": "shelter.svg",
+  "Sleep Spot": "sleepspot.svg",
+};
+
+const spotCategories = Object.keys(spotIconMap); // Use keys from the map for categories
+
+const spots = [];
+for (let i = 0; i < 200; i++) {
+  const lat = 50.0 + Math.random() * 0.3; // Offenbach Umgebung
+  const lng = 8.5 + Math.random() * 0.5;
+  const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
+  const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
+  spots.push({
+    lat,
+    lng,
+    info: `${category} #${i + 1}`,
+    svg: svgFileName,
+    category: category
+  });
+}
+
+const spotIcon = (svgFileName) => L.divIcon({
+  className: 'custom-div-icon',
+  html: getSvgIconHtml(svgFileName, 28),
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -14]
+});
+
+spots.forEach(s => {
+  s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
+});
+
+// Fahrer generieren & Icons
+const directions = [
+  [0.00015, 0],       // Norden
+  [-0.00015, 0],      // Süden
+  [0, 0.00015],       // Osten
+  [0, -0.00015],      // Westen
+  [0.0001, 0.0001],   // Nordost
+  [0.0001, -0.0001],  // Nordwest
+  [-0.0001, 0.0001],  // Südost
+  [-0.0001, -0.0001]  // Südwest
+];
+
+const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
+const riders = [
+  { id: 'Moritz', pos: [50.11, 8.75], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
+  { id: 'Anna', pos: [50.12, 8.7], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
+  { id: 'Tom', pos: [50.10, 8.73], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
+];
+
+// 30 weitere Fahrer mit Zufallsdaten
+for (let i = 0; i < 30; i++) {
+  const lat = 50.0 + Math.random() * 0.3;
+  const lng = 8.5 + Math.random() * 0.5;
+  const color = riderColors[i % riderColors.length];
+  const dir = directions[i % directions.length];
+  riders.push({
+    id: `Fahrer${i + 1}`,
+    pos: [lat, lng],
+    color,
+    speed: 0.00008 + Math.random() * 0.00012,
+    dir
+  });
+}
+
+const riderIcon = (color) => L.divIcon({
+  className: 'rider-div-icon',
+  html: getSvgIconHtml('rider.svg', 32, color),
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+  popupAnchor: [0, -18]
+});
+
+riders.forEach(rider => {
+  rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
+});
 
 // Fahrer-Popup mit Route
 riders.forEach(rider => {
