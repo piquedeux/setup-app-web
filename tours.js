@@ -85,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
       lng,
       info: `${category} #${i + 1}`,
       svg: svgFileName,
-      category: category
+      category: category,
+      id: `spot-${i}` // Added unique ID for tracking
     };
     spots.push(spot);
     // Add marker directly to the cluster group
@@ -158,9 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const ORS_API_KEY = '5b3ce3597851110001cf6248263492386e3d40628c7dbf37a20f27f2';
 
   // --- Spots + Touren im LocalStorage ---
+  // Dummy data for savedTours (can be merged with actual data if loaded from localStorage)
   let savedTours = [
     {
-      id: 1,
+      id: "tour-js-1", // Added unique ID for JS-generated tours
       name: "Tour Berlin → Ostsee",
       days: 5,
       creator: "Moritz",
@@ -169,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       endCoords: [54.0887, 12.1405]
     },
     {
-      id: 2,
+      id: "tour-js-2",
       name: "Rundkurs Spreewald",
       days: 3,
       creator: "Anna",
@@ -178,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
       endCoords: [51.7563, 14.3329]
     },
     {
-      id: 3,
+      id: "tour-js-3",
       name: "Brandenburg Seenplatte",
       days: 4,
       creator: "Tom",
@@ -264,16 +266,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return summary;
   }
 
-  // --- Update Tour Feed ---
+  // --- Update Tour Feed (MODIFIED TO APPEND) ---
+  const renderedTourIds = new Set(); // Keep track of already rendered tours
+
   async function updateTourFeed() {
     const tourList = document.getElementById('tour-list');
     if (!tourList) return;
 
-    tourList.innerHTML = '';
-
+    // Iterate over savedTours and append only if not already rendered
     for (const tour of savedTours) {
+      if (renderedTourIds.has(tour.id)) {
+        continue; // Skip if already added by JS
+      }
+
       const div = document.createElement('div');
       div.classList.add('tour-item');
+      div.dataset.tourId = tour.id; // Add data attribute to identify this JS-generated tour
 
       let meetingPointText = '';
       if (tour.meetingPoint) {
@@ -291,13 +299,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="route-info" id="route-info-${tour.id}" style="font-size:0.9em; color:#666; margin-top:0.3em;"></div>
       `;
 
-      // Join Tour
+      // Event Listeners (same as before)
       div.querySelector('.join-tour-btn').addEventListener('click', e => {
         e.stopPropagation();
         showJoinHint(tour.name, tour.creator);
       });
 
-      // Set Meeting Point
       div.querySelector('.set-meeting-point').addEventListener('click', async e => {
         e.stopPropagation();
         quickOverlayContent.innerHTML = `
@@ -354,12 +361,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .openPopup();
           meetingMarkers.push(marker);
           quickOverlay.style.display = 'none';
-          updateTourFeed();
+          updateTourFeed(); // Re-render to update meeting point text
           map.getContainer().style.cursor = "";
         }
       });
 
-      // Show Route
       div.querySelector('.show-route-btn').addEventListener('click', async e => {
         e.stopPropagation();
         scrollToMap();
@@ -427,6 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       tourList.appendChild(div);
+      renderedTourIds.add(tour.id); // Mark this tour as rendered
     }
   }
 
@@ -563,7 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const svgFileName = spotIconMap[category] || 'X.svg';
     const info = `${category}`;
     if (typeof spots !== "undefined" && typeof map !== "undefined") {
-      const newSpot = { lat, lng, info, svg: svgFileName, category };
+      const newSpot = { lat, lng, info, svg: svgFileName, category, id: `spot-quick-${Date.now()}` }; // Unique ID for quick spots
       spots.push(newSpot);
       const marker = L.marker([lat, lng], { icon: L.divIcon({
         className: 'custom-div-icon',
@@ -594,51 +601,66 @@ document.addEventListener("DOMContentLoaded", () => {
     alert(`${nearby.length} Riders nearby. Send them a request`);
   });
 
+  // Dummy data for logs (can be merged with actual data if loaded from localStorage)
   let logs = [
     {
       author: "Anna",
       date: "2025-07-04 09:12",
       content: "Had such a wonderful ride through the Spreewald today! The weather was absolutely perfect and we met so many kind people along the way. 🌳🚴‍♂️🌞 Stopped for lunch by the river and enjoyed the peaceful scenery. It’s days like these that remind me why I love cycling so much. Totally recommend the route for anyone looking for a mix of nature and adventure!",
-      likes: 2
+      likes: 2,
+      id: "log-js-1" // Added unique ID for JS-generated logs
     },
     {
       author: "Lena",
       date: "2025-07-05 17:28",
       content: "Explored the Brandenburg lake district today and it was breathtaking! The trail took us past shimmering lakes, dense forests, and through a few quiet villages. Even caught a glimpse of a deer near the path. Took plenty of breaks and enjoyed some local snacks. Can’t wait to do this route again with more friends next time!",
-      likes: 3
+      likes: 3,
+      id: "log-js-2"
     },
     {
       author: "Jakob",
       date: "2025-07-06 14:52",
       content: "What an adventure! Rode from Berlin to the outskirts of Potsdam and back. The heat was intense but the scenery made up for it. Found a small bakery hidden in a village that served the best apple strudel I’ve ever had. Got a flat tire halfway through, but a kind passerby helped me out. A great day on the bike overall!",
-      likes: 4
+      likes: 4,
+      id: "log-js-3"
     },
     {
       author: "Nora",
       date: "2025-07-07 10:19",
       content: "Joined a group ride through the Havelland region today and it turned into one of the best tours I’ve done so far! We cycled through sunflower fields, had coffee at a lovely old train station café, and shared stories with fellow riders. Such an inspiring group of people. Already looking forward to the next meetup!",
-      likes: 5
+      likes: 5,
+      id: "log-js-4"
     },
     {
       author: "Tim",
       date: "2025-07-08 15:35",
       content: "Took the long route along the Oder river and wow—what a ride. Beautiful landscapes, a calm breeze, and that golden hour glow towards the end made it unforgettable. Met a fellow cyclist from Denmark and we ended up riding together for a while. Moments like this make solo travel feel much less lonely.",
-      likes: 3
+      likes: 3,
+      id: "log-js-5"
     }
   ];
 
-  let logsShown = 2;
+  let logsShown = 2; // Initial number of JS logs to show
+
+  const renderedLogIds = new Set(); // Keep track of already rendered logs
+
+  // --- Render Logs (MODIFIED TO APPEND) ---
   function renderLogs() {
     const logList = document.getElementById('log-list');
-    logList.innerHTML = '';
+    if (!logList) return;
+
+    // Filter to only display logs not yet rendered by JS
+    const logsToRender = logs.filter(log => !renderedLogIds.has(log.id));
 
     const maxLen = 180;
-    logs.slice(0, logsShown).forEach((log) => {
+    logsToRender.slice(0, logsShown).forEach((log) => {
       if (!log.routeId && savedTours.length) {
+        // Assign a random tour ID from the JS-generated tours
         log.routeId = savedTours[Math.floor(Math.random() * savedTours.length)].id;
       }
       const entry = document.createElement('div');
       entry.className = 'log-entry';
+      entry.dataset.logId = log.id; // Add data attribute to identify this JS-generated log
 
       const isLong = log.content.length > maxLen;
       const shortText = isLong ? log.content.slice(0, maxLen) + '…' : log.content;
@@ -679,16 +701,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const showRouteBtn = entry.querySelector('.show-route-btn');
       showRouteBtn.onclick = () => {
         scrollToMap();
+        // Find the corresponding tour based on ID
         const route = savedTours.find(t => t.id === log.routeId);
         if (route) {
+          // Trigger the click event on the dynamically created tour item's button
           document.querySelector(`.show-route-btn[data-tour="${route.id}"]`)?.click();
         } else {
+          // Fallback if no specific route found (e.g., for dummy content)
           const randomTour = savedTours[Math.floor(Math.random() * savedTours.length)];
           document.querySelector(`.show-route-btn[data-tour="${randomTour.id}"]`)?.click();
         }
       };
 
       logList.appendChild(entry);
+      renderedLogIds.add(log.id); // Mark this log as rendered
     });
 
     const loadMoreBtn = document.getElementById('load-more-logs');
@@ -701,12 +727,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('load-more-logs').onclick = () => {
     logsShown += 3;
     if (logsShown > logs.length) logsShown = logs.length;
-    renderLogs();
+    renderLogs(); // Call renderLogs again to append more
   };
 
   document.getElementById('show-less-logs').onclick = () => {
     logsShown = 2;
-    renderLogs();
+    // To 'show less', we need to remove the extra JS-added logs
+    const logList = document.getElementById('log-list');
+    if (logList) {
+      // Remove all JS-added logs, then re-render the initial set
+      Array.from(logList.children).forEach(child => {
+        if (child.dataset.logId && logs.some(log => log.id === child.dataset.logId)) {
+          child.remove();
+        }
+      });
+      renderedLogIds.clear(); // Clear the set to allow re-rendering
+      renderLogs();
+    }
   };
 
   document.getElementById('add-log').addEventListener('click', () => {
@@ -732,9 +769,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const now = new Date();
       const date = now.toISOString();
       const routeId = savedTours[Math.floor(Math.random() * savedTours.length)]?.id;
-      logs.unshift({ author, date, content, routeId });
+      // Add new log to the beginning of the logs array
+      const newLog = { author, date, content, routeId, id: `log-new-${Date.now()}` };
+      logs.unshift(newLog);
       quickOverlay.style.display = 'none';
-      renderLogs();
+      
+      // To show the new log immediately at the top, clear and re-render all logs
+      const logList = document.getElementById('log-list');
+      if(logList) {
+        logList.innerHTML = ''; // Clear all existing (dummy and JS-added)
+        renderedLogIds.clear(); // Reset tracking
+        logsShown = Math.max(logsShown, 3); // Ensure at least 3 are shown if a new one is added
+        renderLogs(); // Re-render from scratch
+      }
     };
   });
 
@@ -779,8 +826,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  renderLogs();
+  // Initial calls to populate dynamic content, appending to any existing HTML dummy content
   updateTourFeed();
+  renderLogs();
 
   function scrollToMap() {
     const mapContainer = document.getElementById('map-container-start') || document.getElementById('map');
