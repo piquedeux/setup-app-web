@@ -160,7 +160,7 @@ function setupGeolocate(inputId, targetInput, type) {
       if (type === "waypoint") emoji = "🛏️";
       const marker = L.marker([pos.coords.latitude, pos.coords.longitude], {icon: L.divIcon({className: '', html: emoji, iconSize: [24,24]})})
         .addTo(map)
-        .bindPopup(type === "waypoint" ? "Schlafplatz" : "Position")
+        .bindPopup(type === "waypoint" ? "Sleepingspot" : "Position")
         .openPopup();
       tempMarkers.push(marker);
       map.setView([pos.coords.latitude, pos.coords.longitude], 15);
@@ -229,7 +229,7 @@ function renderWaypointList() {
     li.style.alignItems = "center";
     // Rotes X
     const removeBtn = document.createElement('span');
-    removeBtn.textContent = "❌";
+    removeBtn.textContent = "X";
     removeBtn.style.color = "#f44336";
     removeBtn.style.cursor = "pointer";
     removeBtn.style.marginRight = "0.5em";
@@ -421,7 +421,7 @@ function updateTourList() {
       lastPlannedMarkers.push(poly);
       // Start Marker 🐥
       if (route.route.length > 0) {
-        const m = L.marker(route.route[0], {icon: L.divIcon({className: '', html: '🐥', iconSize: [28,28]})})
+        const m = L.marker(route.route[0], {icon: L.divIcon({className: '', html: 'X', iconSize: [28,28]})})
           .addTo(map)
           .bindPopup("Start");
         lastPlannedMarkers.push(m);
@@ -429,7 +429,7 @@ function updateTourList() {
       // Zwischenstopps 🛏️
       if (route.waypoints && route.waypoints.length > 0) {
         route.waypoints.forEach((wp, i) => {
-          const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: '🛏️', iconSize: [24,24]})})
+          const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: 'Sleep', iconSize: [24,24]})})
             .addTo(map)
             .bindPopup("Stopover: " + (wp.name || `Schlafplatz ${i+1}`));
           lastPlannedMarkers.push(m);
@@ -437,7 +437,7 @@ function updateTourList() {
       }
       // Ziel Marker 🎯
       if (route.route.length > 1) {
-        const m = L.marker(route.route[route.route.length-1], {icon: L.divIcon({className: '', html: '🎯', iconSize: [28,28]})})
+        const m = L.marker(route.route[route.route.length-1], {icon: L.divIcon({className: '', html: 'X', iconSize: [28,28]})})
           .addTo(map)
           .bindPopup("Destination");
         lastPlannedMarkers.push(m);
@@ -584,7 +584,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
     lastPlannedMarkers.push(poly);
     // Start Marker 🐥
     if (coords.length > 0) {
-      const m = L.marker(coords[0], {icon: L.divIcon({className: '', html: '🐥', iconSize: [28,28]})})
+      const m = L.marker(coords[0], {icon: L.divIcon({className: '', html: 'X', iconSize: [28,28]})})
         .addTo(map)
         .bindPopup("Start");
       lastPlannedMarkers.push(m);
@@ -592,7 +592,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
     // Zwischenstopps 🛏️
     if (lastPlannedRoute.waypoints && lastPlannedRoute.waypoints.length > 0) {
       lastPlannedRoute.waypoints.forEach((wp, i) => {
-        const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: '🛏️', iconSize: [24,24]})})
+        const m = L.marker(wp.coord, {icon: L.divIcon({className: '', html: 'Sleep', iconSize: [24,24]})})
           .addTo(map)
           .bindPopup("Stopover: " + (wp.name || `Schlafplatz ${i+1}`));
         lastPlannedMarkers.push(m);
@@ -600,7 +600,7 @@ document.getElementById('route-plan-btn').onclick = async function() {
     }
     // Ziel Marker 🎯
     if (coords.length > 1) {
-      const m = L.marker(coords[coords.length-1], {icon: L.divIcon({className: '', html: '🎯', iconSize: [28,28]})})
+      const m = L.marker(coords[coords.length-1], {icon: L.divIcon({className: '', html: 'X', iconSize: [28,28]})})
         .addTo(map)
         .bindPopup("Destination");
       lastPlannedMarkers.push(m);
