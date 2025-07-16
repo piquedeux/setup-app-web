@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // SVG Icon Helper Function
   const getSvgIconHtml = (svgFileName, size = 32, color = 'currentColor') => {
     // Assuming icons are in a folder named 'icon-set' at the root
-    return `<img src="/teral/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); color:${color};" alt="${svgFileName.split('.')[0]}">`;
+    return `<img src="/teral/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; color:${color};" alt="${svgFileName.split('.')[0]}">`;
   };
 
   // Leaflet Map Setup
