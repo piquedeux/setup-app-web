@@ -3,34 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Teral</title>
+ 
+  <title>Teral - Map</title>
 <!-- Metadata -->
 <meta name="description" content="A social cycling app that connects riders, tracks routes, and explores the culture of movement through shared experiences." />
 
 <!-- Favicon and Apple Touch Icon -->
-<link rel="icon" type="image/png" href="/setup-app-web/icon.png" />
-<link rel="apple-touch-icon" href="/setup-app-web/icon.png" />
+<link rel="icon" type="image/png" href="/teral/icon.png" />
+<link rel="apple-touch-icon" href="/teral/icon.png" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://mori77z.de/setup-app-web/index.html" />
-<meta property="og:image" content="/setup-app-web/icon.png" />
+<meta property="og:url" content="https://mori77z.de/teral/index.html" />
+<meta property="og:image" content="/teral/icon.png" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="/setup-app-web/icon.png" />
 <meta name="twitter:image" content="/setup-app-web/icon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Kosugi&family=Kosugi+Maru&display=swap" rel="stylesheet">
-  <link href="styles.css" rel="stylesheet">
+<link href="styles.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.5.0/maptiler-sdk.umd.min.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.5.0/maptiler-sdk.css" rel="stylesheet" />
+    <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v4.1.0/leaflet-maptilersdk.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
 </head>
 <body>
 
 <header>
-  <div class="header-bar">
-    <div class="title">
-      <span class="logo">Teral</span>
-      <span>Profile</span>
-    </div>
-  </div>
+<div class="title">
+  <span class="logo">Teral
+    <img src="/teral/icon-set/logo.svg" alt="Logo" style="height: 2.8em; vertical-align: middle; margin-left: 0.3em;">
+  </span>
+  <span>Plan</span>
   <div>Your data and settings</div>
 </header>
 
