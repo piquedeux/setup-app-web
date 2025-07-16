@@ -477,21 +477,20 @@ main {
     display: flex;
     align-items: center;
     gap: 4px;
-    transform: scale(0.5); /* Make it smaller */
   }
 
   .diamond, .circle, .triangle {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
   }
 
   .diamond {
-    background-color: #2f7e4b;
+    background-color: var(--color-primary);
     transform: rotate(45deg);
   }
 
   .circle {
-    background-color: orange;
+    background-color: var(--color-secondary);
     border-radius: 50%;
   }
 
