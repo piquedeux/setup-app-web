@@ -332,7 +332,7 @@
       steps.forEach((step, i) => {
         step.classList.toggle('active', i === idx);
       });
-      document.getElementById('onboarding-progress').textContent = `Step ${idx+1} of 5`;
+document.getElementById('onboarding-progress').textContent = `Step ${idx+1} of 6`;
     }
     document.querySelectorAll('.next-step').forEach((btn, idx) => {
       btn.onclick = function() {
@@ -354,14 +354,15 @@
     registerForm.onsubmit = async function(e) {
       e.preventDefault();
       // Gather all registration data
-      const profile = {
-        email: document.getElementById('reg-email').value,
-        name: document.getElementById('reg-name').value,
-        bike: document.getElementById('reg-bike').value,
-        fitness: document.getElementById('reg-fitness').value,
-        sleep: document.getElementById('reg-sleep').value,
-        region: document.getElementById('reg-region').value,
-        photo: null
+const profile = {
+  email: document.getElementById('reg-email').value,
+  name: document.getElementById('reg-name').value,
+  bike: document.getElementById('reg-bike').value,
+  fitness: document.getElementById('reg-fitness').value,
+  sleep: document.getElementById('reg-sleep').value,
+  region: document.getElementById('reg-region').value,
+  interests: document.getElementById('reg-interests').value,
+  photo: null
       };
       const photoInput = document.getElementById('reg-photo');
       if (photoInput && photoInput.files && photoInput.files[0]) {
