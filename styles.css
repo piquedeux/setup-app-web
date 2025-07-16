@@ -92,6 +92,17 @@ nav a {
   padding: 0.625rem 0.75rem;
 }
 
+nav a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+nav a:active {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 400;
+}
+
 main {
   flex: 1;
   display: flex;
@@ -129,6 +140,7 @@ main {
 #map-container {
   height: 200px;
   width: 100%;
+  max-width: 800px;
   overflow: hidden;
   position: relative;
   display: flex;
