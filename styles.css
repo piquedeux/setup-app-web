@@ -92,12 +92,13 @@ nav a {
   color: var(--color-text);
   text-decoration: none;
   padding: 0.625rem 0.75rem;
+ transition: transform 0.3s ease-in-out;
 }
 
 nav a:hover {
   color: var(--primary-color);
   text-decoration: none;
-  scale: 0.1;
+  transform: scale(1.1); /* scales text to 110% */
 }
 
 nav a:active {
