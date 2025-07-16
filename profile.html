@@ -94,6 +94,24 @@
     localStorage.removeItem('no2_profile');
     window.location.href = "auth.html";
   }
+// Automatischer Badge basierend auf Interessen
+const profileData = JSON.parse(localStorage.getItem('no2_profile'));
+if (profileData?.interests) {
+  const interestsToBadges = {
+    "Adventure": "A",
+    "Connection": "B",
+    "Solitude": "C",
+    "Challenge": "E",
+    "Freedom": "D"
+  };
+
+  const badgeKey = interestsToBadges[profileData.interests];
+  const badgeBtn = document.querySelector(`.monster-badge-btn[data-badge="${badgeKey}"]`);
+  if (badgeBtn) {
+    // Simuliere einen Klick auf den passenden Badge-Button
+    badgeBtn.click();
+  }
+}
 </script>
 
 </body>
