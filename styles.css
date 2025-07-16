@@ -97,6 +97,7 @@ nav a {
 
 nav a:hover {
   color: var(--secondary-color);
+  font-weight: 600;
   text-decoration: none;
 }
 
