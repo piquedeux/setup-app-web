@@ -229,7 +229,7 @@
         <b>We believe every ride is a story.</b><br>
         Let's set up your profile so you can get the most out of your cycling adventures.
       </div>
-      <div class="onboarding-progress" id="onboarding-progress">Step 1 of 5</div>
+      <div class="onboarding-progress" id="onboarding-progress">Step 1 of 6</div>
       <div class="onboarding-step active" data-step="1">
         <label for="reg-email">Email</label>
         <input type="email" id="reg-email" required autocomplete="username" placeholder="you@email.com" />
@@ -278,6 +278,18 @@
           Your profile is ready to inspire and connect with others.<br>
           <span style="color:#2e8b57;">Let's get rolling!</span>
         </div>
+      <div class="onboarding-step" data-step="6">
+  <label for="reg-interests">What inspires you to ride?</label>
+  <select id="reg-interests" required>
+    <option value="">Select</option>
+    <option value="Adventure">Adventure & Exploration</option>
+    <option value="Connection">Meeting new people</option>
+    <option value="Solitude">Being alone in nature</option>
+    <option value="Challenge">Physical challenge</option>
+    <option value="Freedom">Freedom & Escaping routines</option>
+  </select>
+  <button type="button" class="next-step">Next</button>
+</div>
         <button type="submit">Finish & Go to Profile</button>
       </div>
     </form>
