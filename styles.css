@@ -105,6 +105,7 @@ nav a:active {
   color: var(--color-text);
   text-decoration: none;
   font-weight: 500;
+      transform: scale(0); /* scales text to 110% */
 }
 
 main {
