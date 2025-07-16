@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const ludwigsburgCenter = [48.8975, 9.1916]; // Zentrum Ludwigsburg
+
   // SVG Icon Helper Function
   const getSvgIconHtml = (svgFileName, size = 32, color = 'currentColor') => {
-    // Assuming icons are in a folder named 'icon-set' at the root
     return `<img src="/teral/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; color:${color};" alt="${svgFileName.split('.')[0]}">`;
   };
 
@@ -33,48 +34,55 @@ document.addEventListener("DOMContentLoaded", () => {
     customMaptiler = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'); // Fallback
   }
 
-// Map Setup (früher im Code!)
-const map = L.map('map', {
-  center: [48.8975, 9.1916],
-  zoom: 10,
-  layers: [customMaptiler]
-});
-window.map = map;
-
-// Danach kommt:
-let myLocationMarker = null;
-let hasCenteredOnUser = false;
-
-if (navigator.geolocation) {
-  navigator.geolocation.watchPosition(pos => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-
-    if (myLocationMarker) {
-      myLocationMarker.setLatLng([lat, lng]);
-    } else {
-      myLocationMarker = L.marker([lat, lng], {
-        icon: L.divIcon({
-          className: 'my-location-icon',
-          html: '<div style="width:18px;height:18px;border-radius:50%;background:#007aff;border:2px solid white;box-shadow:0 0 8px rgba(0,0,0,0.4);"></div>',
-          iconSize: [18, 18],
-          iconAnchor: [9, 9]
-        })
-      }).addTo(map).bindPopup("Du bist hier");
-    }
-
-    if (!hasCenteredOnUser) {
-      map.setView([lat, lng], 13);
-      hasCenteredOnUser = true;
-      showNearbySpotsAndRiders([lat, lng], 8000);
-    }
-  }, err => {
-    console.warn("Standortzugriff fehlgeschlagen:", err);
-  }, {
-    enableHighAccuracy: true,
-    maximumAge: 10000
+  const map = L.map('map', {
+    center: ludwigsburgCenter,
+    zoom: 10,
+    layers: [customMaptiler]
   });
-}
+  window.map = map;
+
+  // Standortmarker & zentrieren
+  let myLocationMarker = null;
+  let hasCenteredOnUser = false;
+
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      if (myLocationMarker) {
+        myLocationMarker.setLatLng([lat, lng]);
+      } else {
+        myLocationMarker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'my-location-icon',
+            html: '<div style="width:18px;height:18px;border-radius:50%;background:#007aff;border:2px solid white;box-shadow:0 0 8px rgba(0,0,0,0.4);"></div>',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+          })
+        }).addTo(map).bindPopup("Du bist hier");
+      }
+
+      if (!hasCenteredOnUser) {
+        map.setView([lat, lng], 13);
+        hasCenteredOnUser = true;
+        showNearbySpotsAndRiders([lat, lng], 8000);
+      }
+    }, err => {
+      console.warn("Standortzugriff fehlgeschlagen:", err);
+      // Fallback: Karte bleibt auf Ludwigsburg und lädt trotzdem Spots & Riders
+      if (!hasCenteredOnUser) {
+        showNearbySpotsAndRiders(ludwigsburgCenter, 8000);
+        hasCenteredOnUser = true;
+      }
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 10000
+    });
+  } else {
+    // Falls Geolocation komplett nicht verfügbar ist
+    showNearbySpotsAndRiders(ludwigsburgCenter, 8000);
+  }
 
   // Layer Control
   L.control.layers({
@@ -83,6 +91,7 @@ if (navigator.geolocation) {
     "Satellite map": satellite,
     "Street map": osm
   }).addTo(map);
+
 
   // 📍 Spot Icons & Kategorien
 const spotIconMap = {
