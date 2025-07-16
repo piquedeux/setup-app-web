@@ -79,7 +79,7 @@ if (navigator.geolocation) {
 }
 
   
-// Spot Icons & Categories
+// === Spot Icon Mapping ===
 const spotIconMap = {
   "Water": "water.svg",
   "Restingspot": "restingspot.svg",
@@ -100,7 +100,25 @@ const spotCategories = Object.keys(spotIconMap);
 const allSpots = [];
 const allRiders = [];
 
-// === Helper: Create Spot Markers ===
+// === Directions for rider movement ===
+const directions = [
+  [0.00015, 0],       // North
+  [-0.00015, 0],      // South
+  [0, 0.00015],       // East
+  [0, -0.00015],      // West
+  [0.0001, 0.0001],   // NE
+  [0.0001, -0.0001],  // NW
+  [-0.0001, 0.0001],  // SE
+  [-0.0001, -0.0001]  // SW
+];
+
+// === Rider colors ===
+const riderColors = [
+  "red", "gold", "blue", "green", "purple",
+  "orange", "brown", "pink", "teal", "black"
+];
+
+// === Helper: Spot Generator ===
 function createSpots(regionName, latBase, lngBase, latRange, lngRange, count = 200) {
   const spots = [];
   for (let i = 0; i < count; i++) {
@@ -118,7 +136,7 @@ function createSpots(regionName, latBase, lngBase, latRange, lngRange, count = 2
   return spots;
 }
 
-// === Helper: Create Rider Markers ===
+// === Helper: Rider Generator ===
 function createRiders(regionName, latBase, lngBase, latRange, lngRange, staticRiders = [], count = 30) {
   const riders = [...staticRiders];
   for (let i = 0; i < count; i++) {
@@ -137,7 +155,9 @@ function createRiders(regionName, latBase, lngBase, latRange, lngRange, staticRi
   return riders;
 }
 
-// === 1. Stuttgart ===
+// === Create Regions ===
+
+// Stuttgart
 const stuttgartSpots = createSpots("Stuttgart", 48.7, 9.0, 0.3, 0.5);
 const stuttgartRiders = createRiders("Stuttgart", 48.7, 9.0, 0.3, 0.5, [
   { id: 'Alex', pos: [48.78, 9.18], color: 'blue', speed: 0.00015, dir: [0.00015, 0] },
@@ -145,7 +165,7 @@ const stuttgartRiders = createRiders("Stuttgart", 48.7, 9.0, 0.3, 0.5, [
   { id: 'Mika', pos: [48.76, 9.22], color: 'teal', speed: 0.0001, dir: [-0.0001, 0] }
 ], 30);
 
-// === 2. Berlin ===
+// Berlin
 const berlinSpots = createSpots("Berlin", 52.4, 13.1, 0.4, 0.6);
 const berlinRiders = createRiders("Berlin", 52.4, 13.1, 0.4, 0.6, [
   { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
@@ -153,7 +173,7 @@ const berlinRiders = createRiders("Berlin", 52.4, 13.1, 0.4, 0.6, [
   { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
 ], 30);
 
-// === 3. Offenbach ===
+// Offenbach
 const offenbachSpots = createSpots("Offenbach", 50.0, 8.5, 0.3, 0.5);
 const offenbachRiders = createRiders("Offenbach", 50.0, 8.5, 0.3, 0.5, [
   { id: 'Lena', pos: [50.11, 8.75], color: 'green', speed: 0.00015, dir: [0.00015, 0] },
@@ -199,10 +219,10 @@ const offenbachRiders = createRiders("Offenbach", 50.0, 8.5, 0.3, 0.5, [
 // === Move Riders Periodically ===
 function moveRiders() {
   allRiders.forEach(rider => {
-    let { lat, lng } = rider.marker.getLatLng();
-    lat += rider.dir[0] * rider.speed * 10;
-    lng += rider.dir[1] * rider.speed * 10;
-    rider.marker.setLatLng([lat, lng]);
+    const { lat, lng } = rider.marker.getLatLng();
+    const newLat = lat + rider.dir[0] * rider.speed * 10;
+    const newLng = lng + rider.dir[1] * rider.speed * 10;
+    rider.marker.setLatLng([newLat, newLng]);
   });
 }
 setInterval(moveRiders, 700);
