@@ -96,16 +96,13 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   text-decoration: none;
-  transform: scale(1.25); /* scales text to 110% */
 }
 
 nav a:active {
   color: var(--color-text);
   text-decoration: none;
-  font-weight: 500;
-      transform: scale(0); /* scales text to 110% */
 }
 
 main {
