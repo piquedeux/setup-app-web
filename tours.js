@@ -34,13 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 let myLocationMarker = null;
+let hasCenteredOnUser = false;
 
-// Track user's current location
 if (navigator.geolocation) {
   navigator.geolocation.watchPosition(pos => {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
+    // Marker setzen oder updaten
     if (myLocationMarker) {
       myLocationMarker.setLatLng([lat, lng]);
     } else {
@@ -51,21 +52,29 @@ if (navigator.geolocation) {
           iconSize: [18, 18],
           iconAnchor: [9, 9]
         })
-      }).addTo(map).bindPopup("You are here");
+      }).addTo(map).bindPopup("Du bist hier");
+    }
+
+    // Nur beim ersten Standort automatisch zoomen
+    if (!hasCenteredOnUser) {
+      map.setView([lat, lng], 13);
+      hasCenteredOnUser = true;
+
+      // Ludwigsburg-Check & Marker filtern
+      showNearbySpotsAndRiders([lat, lng], 8000); // z. B. 8 km Umkreis
     }
   }, err => {
-    console.warn("Location access denied or unavailable", err);
+    console.warn("Standortzugriff fehlgeschlagen:", err);
   }, {
     enableHighAccuracy: true,
     maximumAge: 10000
   });
-} else {
-  alert("Geolocation is not supported by your browser.");
 }
+
 
   // Map Setup
   const map = L.map('map', {
-    center: [52.52, 13.3],
+    center: [48.8975, 9.1916],
     zoom: 10,
     layers: [customMaptiler]
   });
@@ -79,95 +88,92 @@ if (navigator.geolocation) {
     "Street map": osm
   }).addTo(map);
 
-  // Spot Icons & Categories
-  const spotIconMap = {
-    "Water": "water.svg",
-    "Restingspot": "restingspot.svg",
-    "Public Toilet": "toilet.svg",
-    "Coffee": "coffee.svg",
-    "Workshop": "workshop.svg",
-    "Pub": "bar.svg",
-    "Hospital": "hospital.svg",
-    "Briefkasten": "postoffice.svg",
-    "Restaurant": "restaurant.svg",
-    "Camping": "camping.svg",
-    "Great View": "greatview.svg",
-    "Shelter": "shelter.svg",
-    "Sleep Spot": "sleepspot.svg",
-  };
+  // 📍 Spot Icons & Kategorien
+const spotIconMap = {
+  "Water": "water.svg",
+  "Restingspot": "restingspot.svg",
+  "Public Toilet": "toilet.svg",
+  "Coffee": "coffee.svg",
+  "Workshop": "workshop.svg",
+  "Pub": "bar.svg",
+  "Hospital": "hospital.svg",
+  "Briefkasten": "postoffice.svg",
+  "Restaurant": "restaurant.svg",
+  "Camping": "camping.svg",
+  "Great View": "greatview.svg",
+  "Shelter": "shelter.svg",
+  "Sleep Spot": "sleepspot.svg",
+};
 
-  const spotCategories = Object.keys(spotIconMap); // Use keys from the map for categories
+const spotCategories = Object.keys(spotIconMap);
+const spots = [];
 
-  const spots = [];
-  for (let i = 0; i < 200; i++) {
-    const lat = 52.4 + Math.random() * 0.4; // Berlin-Umgebung
-    const lng = 13.1 + Math.random() * 0.6;
-    const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
-    const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
-    spots.push({
-      lat,
-      lng,
-      info: `${category} #${i + 1}`,
-      svg: svgFileName,
-      category: category
-    });
-  }
+for (let i = 0; i < 200; i++) {
+  const lat = ludwigsburgCenter[0] + (Math.random() - 0.5) * 0.15; // ±8 km
+  const lng = ludwigsburgCenter[1] + (Math.random() - 0.5) * 0.25; // ±10 km
+  const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
+  const svgFileName = spotIconMap[category] || 'X.svg';
 
-  const spotIcon = (svgFileName) => L.divIcon({
-    className: 'custom-div-icon', // Added class for potential CSS styling
-    html: getSvgIconHtml(svgFileName, 28),
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -14]
+  spots.push({
+    lat,
+    lng,
+    info: `${category} #${i + 1}`,
+    svg: svgFileName,
+    category
   });
+}
 
-  spots.forEach(s => {
-    s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
+const spotIcon = (svgFileName) => L.divIcon({
+  className: 'custom-div-icon',
+  html: getSvgIconHtml(svgFileName, 28),
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -14]
+});
+
+spots.forEach(s => {
+  s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
+});
+
+// 🚴‍♂️ Rider generieren
+const directions = [
+  [0.00015, 0], [‑0.00015, 0], [0, 0.00015], [0, -0.00015],
+  [0.0001, 0.0001], [0.0001, -0.0001], [-0.0001, 0.0001], [-0.0001, -0.0001]
+];
+const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
+
+const riders = [
+  { id: 'Moritz', pos: [48.899, 9.185], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
+  { id: 'Anna', pos: [48.891, 9.195], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
+  { id: 'Tom', pos: [48.903, 9.188], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
+];
+
+for (let i = 0; i < 30; i++) {
+  const lat = ludwigsburgCenter[0] + (Math.random() - 0.5) * 0.15;
+  const lng = ludwigsburgCenter[1] + (Math.random() - 0.5) * 0.25;
+  const color = riderColors[i % riderColors.length];
+  const dir = directions[i % directions.length];
+
+  riders.push({
+    id: `Fahrer${i + 1}`,
+    pos: [lat, lng],
+    color,
+    speed: 0.00008 + Math.random() * 0.00012,
+    dir
   });
+}
 
-  // Fahrer generieren & Icons
-  const directions = [
-    [0.00015, 0],       // Norden
-    [-0.00015, 0],      // Süden
-    [0, 0.00015],       // Osten
-    [0, -0.00015],      // Westen
-    [0.0001, 0.0001],   // Nordost
-    [0.0001, -0.0001],  // Nordwest
-    [-0.0001, 0.0001],  // Südost
-    [-0.0001, -0.0001]  // Südwest
-  ];
-  const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
-  const riders = [
-    { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
-    { id: 'Anna', pos: [52.53, 13.35], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
-    { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
-  ];
-  // 30 weitere Fahrer mit Zufallsdaten
-  for (let i = 0; i < 30; i++) {
-    const lat = 52.4 + Math.random() * 0.4;
-    const lng = 13.1 + Math.random() * 0.6;
-    const color = riderColors[i % riderColors.length];
-    const dir = directions[i % directions.length];
-    riders.push({
-      id: `Fahrer${i + 1}`,
-      pos: [lat, lng],
-      color,
-      speed: 0.00008 + Math.random() * 0.00012,
-      dir
-    });
-  }
+const riderIcon = (color) => L.divIcon({
+  className: 'rider-div-icon',
+  html: getSvgIconHtml('rider.svg', 32, color),
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+  popupAnchor: [0, -18]
+});
 
-  const riderIcon = (color) => L.divIcon({
-    className: 'rider-div-icon',
-    html: getSvgIconHtml('rider.svg', 32, color), // Use rider.svg
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -18]
-  });
-
-  riders.forEach(rider => {
-    rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
-  });
+riders.forEach(rider => {
+  rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
+});
 
   // Fahrer Popup mit Route anzeigen
   riders.forEach(rider => {
