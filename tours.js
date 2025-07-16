@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // SVG Icon Helper Function
   const getSvgIconHtml = (svgFileName, size = 32, color = 'currentColor') => {
     // Assuming icons are in a folder named 'icon-set' at the root
-    return `<img src="/teral/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); color:${color};" alt="${svgFileName.split('.')[0]}">`;
+    return `<img src="/icon-set/${svgFileName}" style="width:${size}px; height:${size}px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); color:${color};" alt="${svgFileName.split('.')[0]}">`;
   };
 
   // Leaflet Map Setup
@@ -34,9 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Map Setup
+  // Initial center and zoom can be global, clustering handles dense areas
   const map = L.map('map', {
-    center: [52.52, 13.3],
-    zoom: 10,
+    center: [0, 0], // Start centered globally
+    zoom: 2,       // Low zoom to show global view
     layers: [customMaptiler]
   });
   window.map = map;
@@ -49,6 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "Street map": osm
   }).addTo(map);
 
+  // --- Marker Clustering Setup ---
+  const markers = L.markerClusterGroup();
+  map.addLayer(markers);
+
   // Spot Icons & Categories
   const spotIconMap = {
     "Wasserstelle": "water.svg",
@@ -56,111 +61,98 @@ document.addEventListener("DOMContentLoaded", () => {
     "Toilette": "toilet.svg",
     "Cafe": "coffee.svg",
     "Werkstatt": "workshop.svg",
-    "Pub": "bar.svg", // Assuming 'Kneipe' maps to 'Pub'
+    "Pub": "bar.svg",
     "Krankenhaus": "hospital.svg",
     "Briefkasten": "postoffice.svg",
     "Restaurant": "restaurant.svg",
-    // Adding other SVGs that aren't explicitly in spotCategories but might be used
     "Camping": "camping.svg",
     "Great View": "greatview.svg",
     "Shelter": "shelter.svg",
     "Sleep Spot": "sleepspot.svg",
   };
 
-  const spotCategories = Object.keys(spotIconMap); // Use keys from the map for categories
+  const spotCategories = Object.keys(spotIconMap);
 
   const spots = [];
-  for (let i = 0; i < 200; i++) {
-    const lat = 52.4 + Math.random() * 0.4; // Berlin-Umgebung
-    const lng = 13.1 + Math.random() * 0.6;
+  // Distribute spots globally
+  for (let i = 0; i < 2000; i++) { // Increased number of spots for better global demonstration
+    const lat = (Math.random() * 180) - 90; // -90 to +90
+    const lng = (Math.random() * 360) - 180; // -180 to +180
     const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
-    const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
-    spots.push({
+    const svgFileName = spotIconMap[category] || 'X.svg';
+    const spot = {
       lat,
       lng,
       info: `${category} #${i + 1}`,
       svg: svgFileName,
       category: category
-    });
+    };
+    spots.push(spot);
+    // Add marker directly to the cluster group
+    spot.marker = L.marker([spot.lat, spot.lng], { icon: L.divIcon({
+      className: 'custom-div-icon',
+      html: getSvgIconHtml(spot.svg, 28),
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -14]
+    })}).bindPopup(spot.info);
+    markers.addLayer(spot.marker);
   }
-
-  const spotIcon = (svgFileName) => L.divIcon({
-    className: 'custom-div-icon', // Added class for potential CSS styling
-    html: getSvgIconHtml(svgFileName, 28),
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    popupAnchor: [0, -14]
-  });
-
-  spots.forEach(s => {
-    s.marker = L.marker([s.lat, s.lng], { icon: spotIcon(s.svg) }).addTo(map).bindPopup(s.info);
-  });
 
   // Fahrer generieren & Icons
   const directions = [
-    [0.00015, 0],       // Norden
-    [-0.00015, 0],      // Süden
-    [0, 0.00015],       // Osten
-    [0, -0.00015],      // Westen
-    [0.0001, 0.0001],   // Nordost
-    [0.0001, -0.0001],  // Nordwest
-    [-0.0001, 0.0001],  // Südost
-    [-0.0001, -0.0001]  // Südwest
+    [0.00015, 0],
+    [-0.00015, 0],
+    [0, 0.00015],
+    [0, -0.00015],
+    [0.0001, 0.0001],
+    [0.0001, -0.0001],
+    [-0.0001, 0.0001],
+    [-0.0001, -0.0001]
   ];
   const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
-  const riders = [
-    { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
-    { id: 'Anna', pos: [52.53, 13.35], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
-    { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
-  ];
-  // 30 weitere Fahrer mit Zufallsdaten
-  for (let i = 0; i < 30; i++) {
-    const lat = 52.4 + Math.random() * 0.4;
-    const lng = 13.1 + Math.random() * 0.6;
+  const riders = [];
+  // 50 additional riders distributed globally
+  for (let i = 0; i < 50; i++) {
+    const lat = (Math.random() * 180) - 90;
+    const lng = (Math.random() * 360) - 180;
     const color = riderColors[i % riderColors.length];
     const dir = directions[i % directions.length];
-    riders.push({
-      id: `Fahrer${i + 1}`,
+    const rider = {
+      id: `Rider${i + 1}`,
       pos: [lat, lng],
       color,
       speed: 0.00008 + Math.random() * 0.00012,
       dir
-    });
+    };
+    riders.push(rider);
+    rider.marker = L.marker(rider.pos, { icon: L.divIcon({
+      className: 'rider-div-icon',
+      html: getSvgIconHtml('rider.svg', 32, color),
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -18]
+    })}).bindPopup(`<b>${rider.id}</b><br>Speed: ${(rider.speed * 100000).toFixed(2)} km/h`); // Added direct popup for riders
+    markers.addLayer(rider.marker); // Add rider markers to the cluster group
   }
 
-  const riderIcon = (color) => L.divIcon({
-    className: 'rider-div-icon',
-    html: getSvgIconHtml('rider.svg', 32, color), // Use rider.svg
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -18]
-  });
-
-  riders.forEach(rider => {
-    rider.marker = L.marker(rider.pos, { icon: riderIcon(rider.color) }).addTo(map);
-  });
-
-  // Fahrer Popup mit Route anzeigen
-  riders.forEach(rider => {
-    rider.marker.on('click', () => {
-      const profileLink = `<a href="/profile.html?user=${encodeURIComponent(rider.id)}" class="profile-link" target="_blank">${rider.id}</a>`;
-      rider.marker.bindPopup(`
-        <b>${profileLink}</b><br>
-        Geschwindigkeit: ${(rider.speed * 100000).toFixed(2)} km/h<br>
-        `).openPopup();
-    });
-  });
-
-  // Fahrer bewegen (Loop)
+  // Fahrer bewegen (Loop) - Movement will now be global
   function moveRiders() {
     riders.forEach(rider => {
       let { lat, lng } = rider.marker.getLatLng();
-      lat += rider.speed;
-      if (lat > 52.8) lat = 52.4;
+      lat += rider.dir[0] * rider.speed * 5000; // Increased movement factor
+      lng += rider.dir[1] * rider.speed * 5000; // Increased movement factor
+
+      // Wrap around the globe
+      if (lat > 90) lat = -90 + (lat - 90);
+      if (lat < -90) lat = 90 + (lat + 90);
+      if (lng > 180) lng = -180 + (lng - 180);
+      if (lng < -180) lng = 180 + (lng + 180);
+      
       rider.marker.setLatLng([lat, lng]);
     });
   }
-  setInterval(moveRiders, 700);
+  setInterval(moveRiders, 1000); // Slower interval for better global visualization
 
   // --- ORS API Key ---
   const ORS_API_KEY = '5b3ce3597851110001cf6248263492386e3d40628c7dbf37a20f27f2';
@@ -173,10 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
       days: 5,
       creator: "Moritz",
       multiDay: true,
-      // Berlin Hbf
-      startCoords: [52.52508, 13.3694], // [lat, lng]
-      // Rostock Hbf
-      endCoords: [54.0887, 12.1405]      // [lat, lng]
+      startCoords: [52.52508, 13.3694],
+      endCoords: [54.0887, 12.1405]
     },
     {
       id: 2,
@@ -184,9 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       days: 3,
       creator: "Anna",
       multiDay: false,
-      // Lübbenau
       startCoords: [51.8686, 13.9601],
-      // Cottbus
       endCoords: [51.7563, 14.3329]
     },
     {
@@ -195,14 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
       days: 4,
       creator: "Tom",
       multiDay: true,
-      // Brandenburg an der Havel
       startCoords: [52.4167, 12.5500],
-      // Rheinsberg
       endCoords: [53.0981, 12.8927]
     }
   ];
 
-  // --- Helfer: Spot per Id finden ---
+  // --- Helper: Find Spot by Id ---
   function getSpotById(id) {
     return spots.find(s => s.id === id || s.name === id);
   }
@@ -216,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  // --- Route von ORS holen ---
+  // --- Get Route from ORS ---
   async function getRouteFromORS(start, waypoints, end) {
     const coords = [
       [start[1], start[0]],
@@ -237,14 +223,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentRouteLayer = null;
   let currentRouteMarkers = [];
 
-  // --- Route anzeigen ---
+  // --- Display Route ---
   function displayRoute(routeData, waypoints) {
     if (currentRouteLayer) map.removeLayer(currentRouteLayer);
     currentRouteMarkers.forEach(m => map.removeLayer(m));
     currentRouteMarkers = [];
 
     if (!routeData || !routeData.features || !routeData.features[0]) {
-      alert("Keine Route gefunden!");
+      alert("No route found!");
       return;
     }
     const coords = routeData.features[0].geometry.coordinates.map(c => [c[1], c[0]]);
@@ -259,18 +245,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }).addTo(map).bindPopup("Start")
     );
 
-    // Marker Ziel X
+    // Marker Target X
     currentRouteMarkers.push(
       L.marker(coords[coords.length - 1], {
         icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
-      }).addTo(map).bindPopup("Ziel")
+      }).addTo(map).bindPopup("Target")
     );
 
-    // Marker Zwischenstopps X
+    // Marker Waypoints X
     waypoints.forEach((wp, i) => {
       L.marker(wp, {
         icon: L.divIcon({ className: '', html: '<span style="font-size: 24px;">X</span>', iconSize: [24, 24] })
-      }).addTo(map).bindPopup(`Zwischenstopp ${i + 1}`);
+      }).addTo(map).bindPopup(`Waypoint ${i + 1}`);
     });
 
     map.fitBounds(coords);
@@ -278,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return summary;
   }
 
-  // --- Touren Feed aktualisieren ---
+  // --- Update Tour Feed ---
   async function updateTourFeed() {
     const tourList = document.getElementById('tour-list');
     if (!tourList) return;
@@ -291,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let meetingPointText = '';
       if (tour.meetingPoint) {
-        meetingPointText = `<br>📌 Treffpunkt: ${tour.meetingPoint.name}`;
+        meetingPointText = `<br>📌 Meeting Point: ${tour.meetingPoint.name}`;
       }
 
       div.innerHTML = `
@@ -305,13 +291,13 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="route-info" id="route-info-${tour.id}" style="font-size:0.9em; color:#666; margin-top:0.3em;"></div>
       `;
 
-      // Mitfahren
+      // Join Tour
       div.querySelector('.join-tour-btn').addEventListener('click', e => {
         e.stopPropagation();
         showJoinHint(tour.name, tour.creator);
       });
 
-      // Treffpunkt setzen
+      // Set Meeting Point
       div.querySelector('.set-meeting-point').addEventListener('click', async e => {
         e.stopPropagation();
         quickOverlayContent.innerHTML = `
@@ -323,7 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         quickOverlay.style.display = 'flex';
 
-        // Live Adressvorschläge
         const input = document.getElementById('meeting-search');
         const suggestions = document.getElementById('meeting-suggestions');
         input.oninput = async function() {
@@ -348,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
 
-        // Karte auswählen
         document.getElementById('meeting-map-pick').onclick = () => {
           quickOverlay.style.display = 'none';
           map.once('click', e => {
@@ -357,17 +341,16 @@ document.addEventListener("DOMContentLoaded", () => {
           map.getContainer().style.cursor = "crosshair";
         };
 
-        // Abbrechen
         document.getElementById('meeting-cancel').onclick = () => quickOverlay.style.display = 'none';
 
-        let meetingMarkers = []; // Define meetingMarkers within the scope
+        let meetingMarkers = [];
         function selectMeeting(coords, name) {
           tour.meetingPoint = { name, coord: coords };
           meetingMarkers.forEach(m => map.removeLayer(m));
           meetingMarkers = [];
-          const marker = L.marker(coords, { icon: L.divIcon({ className: '', html: getSvgIconHtml('X.svg', 24) }) }) // Use X.svg for meeting point
+          const marker = L.marker(coords, { icon: L.divIcon({ className: '', html: '<span style="font-size: 24px;">X</span>', iconSize: [24, 24] }) })
             .addTo(map)
-            .bindPopup(`Treffpunkt: ${name}`)
+            .bindPopup(`Meeting Point: ${name}`)
             .openPopup();
           meetingMarkers.push(marker);
           quickOverlay.style.display = 'none';
@@ -376,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Route anzeigen
+      // Show Route
       div.querySelector('.show-route-btn').addEventListener('click', async e => {
         e.stopPropagation();
         scrollToMap();
@@ -385,13 +368,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const endCoords = tour.endCoords;
 
         if (!startCoords || !endCoords) {
-          alert("Start oder Ziel nicht verfügbar!");
+          alert("Start or destination not available!");
           return;
         }
 
         const coordinates = [
-          [startCoords[1], startCoords[0]], // [lng, lat]
-          [endCoords[1], endCoords[0]]      // [lng, lat]
+          [startCoords[1], startCoords[0]],
+          [endCoords[1], endCoords[0]]
         ];
         const url = `https://api.openrouteservice.org/v2/directions/cycling-regular/geojson?api_key=${ORS_API_KEY}`;
         const body = { coordinates };
@@ -404,17 +387,16 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           data = await res.json();
         } catch (err) {
-          alert("Fehler beim Laden der Route: " + err);
+          alert("Error loading route: " + err);
           return;
         }
 
         if (!data || !data.features || !data.features[0]) {
-          alert("Route konnte nicht geladen werden. (ORS-Fehler)");
+          alert("Route could not be loaded. (ORS error)");
           console.log("ORS response:", data);
           return;
         }
 
-        // Vorherige Route und Marker entfernen
         if (currentRouteLayer) map.removeLayer(currentRouteLayer);
         currentRouteMarkers.forEach(m => map.removeLayer(m));
         currentRouteMarkers = [];
@@ -424,26 +406,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentRouteLayer = L.polyline(coords, { color: 'black', weight: 3 }).addTo(map);
 
-        // Start Marker X
         currentRouteMarkers.push(
           L.marker(coords[0], {
             icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
           }).addTo(map).bindPopup("Start")
         );
 
-        // Ziel Marker X
         currentRouteMarkers.push(
           L.marker(coords[coords.length - 1], {
             icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
-          }).addTo(map).bindPopup("Ziel")
+          }).addTo(map).bindPopup("Target")
         );
 
         map.fitBounds(coords);
 
-        // Distanz & Dauer anzeigen
         const infoDiv = document.getElementById(`route-info-${tour.id}`);
         if (summary) {
-          infoDiv.innerHTML = `Länge: ${(summary.distance / 1000).toFixed(1)} km &nbsp; | &nbsp; Dauer: ${(summary.duration / 3600).toFixed(1)} h`;
+          infoDiv.innerHTML = `Length: ${(summary.distance / 1000).toFixed(1)} km &nbsp; | &nbsp; Duration: ${(summary.duration / 3600).toFixed(1)} h`;
         }
       });
 
@@ -458,19 +437,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const quickOverlay = document.getElementById('quick-overlay');
   const quickOverlayContent = document.getElementById('quick-overlay-content');
 
-  // Menü öffnen/schließen
   plusBtn.addEventListener('click', () => {
     plusMenu.style.display = plusMenu.style.display === 'flex' ? 'none' : 'flex';
   });
 
-  // Overlay schließen bei Klick außerhalb
   quickOverlay.addEventListener('mousedown', (e) => {
     if (e.target === quickOverlay) {
       quickOverlay.style.display = 'none';
     }
   });
 
-  // Schnell Spot hinzufügen Overlay
   document.getElementById('add-spot').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     const categoryOptions = Object.keys(spotIconMap).map(cat => `<option value="${cat}">${cat}</option>`).join('');
@@ -497,28 +473,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('quick-spot-here').onclick = () => {
       const category = document.getElementById('quick-spot-category').value;
       if (!category) {
-        alert("Bitte eine Kategorie wählen!");
+        alert("Please select a category!");
         return;
       }
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(pos) {
           addQuickSpot(category, pos.coords.latitude, pos.coords.longitude);
         }, function() {
-          alert("Standort nicht verfügbar.");
+          alert("Location not available.");
         });
       } else {
-        alert("Standort nicht verfügbar.");
+        alert("Location not available.");
       }
       quickOverlay.style.display = 'none';
     };
   });
 
-  // Schnell Route planen Overlay
   document.getElementById('start-plan').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     quickOverlayContent.innerHTML = `
-      <h4>Schnell Route planen</h4>
-      <input id="quick-dest" type="text" placeholder="Adresse oder Koordinaten" required>
+      <h4>Quick Route Plan</h4>
+      <input id="quick-dest" type="text" placeholder="Address or Coordinates" required>
       <div id="quick-dest-suggestions" class="suggestions"></div>
       <button id="quick-dest-map-pick" type="button">Pick on map</button>
       <div class="quick-form-actions">
@@ -529,7 +504,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     quickOverlay.style.display = 'flex';
 
-    // Live Adressvorschläge
     const input = document.getElementById('quick-dest');
     const suggestions = document.getElementById('quick-dest-suggestions');
     let destCoords = null;
@@ -560,12 +534,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    // Karte auswählen
     document.getElementById('quick-dest-map-pick').onclick = () => {
       quickOverlay.style.display = 'none';
       map.once('click', e => {
         destCoords = [e.latlng.lat, e.latlng.lng];
-        alert(`Route zum Zielpunkt (${e.latlng.lat.toFixed(5)},${e.latlng.lng.toFixed(5)}) wird geplant (Demo).`);
+        alert(`Route to target point (${e.latlng.lat.toFixed(5)},${e.latlng.lng.toFixed(5)}) will be planned (Demo).`);
         map.getContainer().style.cursor = "";
       });
       map.getContainer().style.cursor = "crosshair";
@@ -578,28 +551,36 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     document.getElementById('quick-route-plan').onclick = () => {
       if (!destCoords) {
-        alert("Bitte Zielkoordinaten oder Adresse wählen!");
+        alert("Please select target coordinates or address!");
         return;
       }
-      alert("Route zum Zielpunkt wird geplant (Demo).");
+      alert("Route to target point will be planned (Demo).");
       quickOverlay.style.display = 'none';
     };
   });
 
   function addQuickSpot(category, lat, lng) {
-    const svgFileName = spotIconMap[category] || 'X.svg'; // Get SVG filename for the category
+    const svgFileName = spotIconMap[category] || 'X.svg';
     const info = `${category}`;
-    if (typeof spots !== "undefined" && typeof map !== "undefined" && typeof spotIcon === "function") {
-      spots.push({ lat, lng, info, svg: svgFileName, category });
-      const marker = L.marker([lat, lng], { icon: spotIcon(svgFileName) }).addTo(map).bindPopup(info);
+    if (typeof spots !== "undefined" && typeof map !== "undefined") {
+      const newSpot = { lat, lng, info, svg: svgFileName, category };
+      spots.push(newSpot);
+      const marker = L.marker([lat, lng], { icon: L.divIcon({
+        className: 'custom-div-icon',
+        html: getSvgIconHtml(svgFileName, 28),
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14]
+      })}).bindPopup(info);
+      markers.addLayer(marker); // Add new spot to the cluster group
       map.setView([lat, lng], 16);
       marker.openPopup();
     }
   }
-  // Event für Mitfahrer-Finder Button
+
   document.getElementById('find-partners').addEventListener('click', () => {
     if (typeof map === "undefined" || typeof riders === "undefined") {
-      alert("Karte oder Mitfahrer-Daten sind noch nicht geladen.");
+      alert("Map or rider data not yet loaded.");
       return;
     }
 
@@ -607,13 +588,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const nearby = riders.filter(r => {
       const pos = r.marker.getLatLng();
       const dist = map.distance([myPos.lat, myPos.lng], [pos.lat, pos.lng]);
-      return dist < 5000; // 5 km Radius
+      return dist < 500000; // Increased radius for global context (500km)
     });
 
-    alert(`${nearby.length} Drivers nearby. Send them a request`);
+    alert(`${nearby.length} Riders nearby. Send them a request`);
   });
 
-  // --- Demo Log-Daten ---
   let logs = [
     {
       author: "Anna",
@@ -666,7 +646,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<span class="content">${shortText}</span> <span class="toggle-btn">Show more</span>`
         : `<span class="content">${log.content}</span>`;
 
-      // Datum schön formatieren
       const dateObj = new Date(log.date);
       const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
         ' ' +
@@ -697,7 +676,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       }
 
-      // Show route Button
       const showRouteBtn = entry.querySelector('.show-route-btn');
       showRouteBtn.onclick = () => {
         scrollToMap();
@@ -713,7 +691,6 @@ document.addEventListener("DOMContentLoaded", () => {
       logList.appendChild(entry);
     });
 
-    // Buttons anzeigen / verstecken
     const loadMoreBtn = document.getElementById('load-more-logs');
     const showLessBtn = document.getElementById('show-less-logs');
 
@@ -722,7 +699,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById('load-more-logs').onclick = () => {
-    logsShown += 3; // Oder beliebige Anzahl zum Nachladen
+    logsShown += 3;
     if (logsShown > logs.length) logsShown = logs.length;
     renderLogs();
   };
@@ -732,7 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderLogs();
   };
 
-  // Log erstellen über Plus-Menü
   document.getElementById('add-log').addEventListener('click', () => {
     plusMenu.style.display = 'none';
     quickOverlayContent.innerHTML = `
@@ -782,7 +758,7 @@ document.addEventListener("DOMContentLoaded", () => {
       hint.style.pointerEvents = 'none';
       document.body.appendChild(hint);
     }
-    hint.textContent = `You send a request to join the tour by "${tourName}". ${creator} Received your request, wait until he accepts.`;
+    hint.textContent = `You sent a request to join the tour by "${tourName}". ${creator} received your request, wait until they accept.`;
     hint.style.display = 'block';
     hint.style.opacity = '1';
     setTimeout(() => {
@@ -791,7 +767,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3500);
   }
 
-  // Schließen des Plus-Menüs bei Klick außerhalb
   document.addEventListener('mousedown', (e) => {
     const plusMenu = document.getElementById('plus-menu');
     const plusBtn = document.getElementById('plus-button');
