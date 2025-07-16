@@ -469,7 +469,7 @@ main {
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
+  padding: 0.5em;
   width: auto;
 }
 
@@ -479,46 +479,53 @@ main {
   gap: 4px;
 }
 
-/* Diamond */
+/* Kreis & Raute */
+.diamond, .circle {
+  width: 14px;
+  height: 14px;
+}
+
 .diamond {
-  width: 12px;
-  height: 12px;
   background-color: var(--color-primary);
   transform: rotate(45deg);
   transition: transform 0.3s ease;
   transform-origin: center center;
 }
 
-/* Circle */
 .circle {
-  width: 14px;
-  height: 14px;
   background-color: var(--color-secondary);
   border-radius: 50%;
 }
 
-/* Triangle */
-.triangle {
-  width: 10px;
-  height: 10px;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 20px solid black;
+/* Wrapper = Quadrat, für zentriertes Rotieren */
+.triangle-wrapper {
+  width: 20px;
+  height: 20px;
+  position: relative;
   transition: transform 0.3s ease;
   transform-origin: center center;
 }
 
-/* Only rotate diamond and triangle when checkbox is checked */
+/* Das eigentliche Dreieck */
+.triangle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 20px solid black;
+  transform: translate(-50%, -50%);
+}
+
+/* Dreieck & Raute rotieren beim Toggle */
 .settings-toggle:checked + .settings-btn .diamond {
-  transform: rotate(135deg); /* 45 + 90 */
+  transform: rotate(135deg);
 }
 
-.settings-toggle:checked + .settings-btn .triangle {
+.settings-toggle:checked + .settings-btn .triangle-wrapper {
   transform: rotate(90deg);
-}
-
-.settings-toggle:checked + .settings-btn + .settings-menu {
-  display: flex;
 }
 
 .settings-menu {
