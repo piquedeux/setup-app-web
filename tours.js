@@ -33,6 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
     customMaptiler = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'); // Fallback
   }
 
+// Map Setup (früher im Code!)
+const map = L.map('map', {
+  center: [48.8975, 9.1916],
+  zoom: 10,
+  layers: [customMaptiler]
+});
+window.map = map;
+
+// Danach kommt:
 let myLocationMarker = null;
 let hasCenteredOnUser = false;
 
@@ -41,7 +50,6 @@ if (navigator.geolocation) {
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
-    // Marker setzen oder updaten
     if (myLocationMarker) {
       myLocationMarker.setLatLng([lat, lng]);
     } else {
@@ -55,13 +63,10 @@ if (navigator.geolocation) {
       }).addTo(map).bindPopup("Du bist hier");
     }
 
-    // Nur beim ersten Standort automatisch zoomen
     if (!hasCenteredOnUser) {
       map.setView([lat, lng], 13);
       hasCenteredOnUser = true;
-
-      // Ludwigsburg-Check & Marker filtern
-      showNearbySpotsAndRiders([lat, lng], 8000); // z. B. 8 km Umkreis
+      showNearbySpotsAndRiders([lat, lng], 8000);
     }
   }, err => {
     console.warn("Standortzugriff fehlgeschlagen:", err);
@@ -70,15 +75,6 @@ if (navigator.geolocation) {
     maximumAge: 10000
   });
 }
-
-
-  // Map Setup
-  const map = L.map('map', {
-    center: [48.8975, 9.1916],
-    zoom: 10,
-    layers: [customMaptiler]
-  });
-  window.map = map;
 
   // Layer Control
   L.control.layers({
