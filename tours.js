@@ -3,26 +3,35 @@ document.addEventListener("DOMContentLoaded", () => {
 const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: ''
 });
+
 const openCycle = L.tileLayer(
   'https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=21cc11436f2e4f3fb21e9c54503048ed',
   {
     attribution: '<a href="https://www.opencyclemap.org/docs/" target="_blank" rel="noopener">Legende</a>'
   }
 );
+
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: ''
 });
 
-// Map Setup (OpenCycleMap als Start-Layer)
+// MapTiler Custom Vektor-Stil
+const customMaptiler = new L.maptiler.maptilerLayer({
+  apiKey: "CFkN2tzFRlUROwVG93Cn",
+  style: "https://api.maptiler.com/maps/0198127a-c9cf-7690-a1af-d08f47d873ca/style.json"
+});
+
+// Map Setup
 const map = L.map('map', {
   center: [52.52, 13.3],
   zoom: 10,
-  layers: [openCycle]
+  layers: [customMaptiler]
 });
 window.map = map;
 
 // Layer Control
 L.control.layers({
+  "Teral map": customMaptiler, 
   "Cycle map": openCycle,
   "Satellite map": satellite,
   "Street map": osm
