@@ -362,7 +362,7 @@ setInterval(moveRiders, 700);
           if (/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(val)) {
             const coords = val.split(',').map(Number);
             const div = document.createElement('div');
-            div.textContent = `📍 ${coords[0]},${coords[1]}`;
+            div.textContent = `🔸 ${coords[0]},${coords[1]}`;
             div.onclick = () => selectMeeting(coords, val);
             suggestions.appendChild(div);
           } else if (val.length > 2) {
@@ -371,7 +371,7 @@ setInterval(moveRiders, 700);
             const addr = await res.json();
             addr.forEach(a => {
               const div = document.createElement('div');
-              div.textContent = "📍 " + a.display_name;
+              div.textContent = "🔸 " + a.display_name;
               div.onclick = () => selectMeeting([parseFloat(a.lat), parseFloat(a.lon)], a.display_name);
               suggestions.appendChild(div);
             });
@@ -579,7 +579,7 @@ setInterval(moveRiders, 700);
         const addr = await res.json();
         addr.forEach(a => {
           const div = document.createElement('div');
-          div.textContent = "📍 " + a.display_name;
+          div.textContent = "🔸" + a.display_name;
           div.onclick = () => {
             destCoords = [parseFloat(a.lat), parseFloat(a.lon)];
             input.value = `${a.lat},${a.lon}`;
@@ -648,7 +648,7 @@ setInterval(moveRiders, 700);
     {
       author: "Anna",
       date: "2025-07-04 09:12",
-      content: "Had such a wonderful ride through the Spreewald today! The weather was absolutely perfect and we met so many kind people along the way. 🌳🚴‍♂️🌞 Stopped for lunch by the river and enjoyed the peaceful scenery. It’s days like these that remind me why I love cycling so much. Totally recommend the route for anyone looking for a mix of nature and adventure!",
+      content: "Had such a wonderful ride through the Spreewald today! The weather was absolutely perfect and we met so many kind people along the way. Stopped for lunch by the river and enjoyed the peaceful scenery. It’s days like these that remind me why I love cycling so much. Totally recommend the route for anyone looking for a mix of nature and adventure!",
       likes: 2
     },
     {
@@ -696,7 +696,6 @@ setInterval(moveRiders, 700);
         ? `<span class="content">${shortText}</span> <span class="toggle-btn">Show more</span>`
         : `<span class="content">${log.content}</span>`;
 
-      // Datum schön formatieren
       const dateObj = new Date(log.date);
       const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
         ' ' +
@@ -704,7 +703,7 @@ setInterval(moveRiders, 700);
 
       entry.innerHTML = `
         <div class="author">
-          <a href="/profile.html?user=${encodeURIComponent(log.author)}" class="profile-link">${log.author}</a>
+          <a href="#" class="profile-link">${log.author}</a>
         </div>
         <div class="date">${dateStr}</div>
         ${contentHtml}
