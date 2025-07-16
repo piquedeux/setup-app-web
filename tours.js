@@ -17,9 +17,10 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let customMaptiler;
 try {
-  customMaptiler = new L.maptiler.maptilerLayer({
-    apiKey: "CFkN2tzFRlUROwVG93Cn",
-    style: "https://api.maptiler.com/maps/0198127a-c9cf-7690-a1af-d08f47d873ca/style.json"
+  const key = 'CFkN2tzFRlUROwVG93Cn';
+  customMaptiler = L.maptiler.maptilerLayer({
+    apiKey: key,
+    style: L.maptiler.MapStyle.STREETS // Optional: auch möglich z. B. OUTDOOR, BASIC etc.
   });
 } catch (err) {
   console.error("MapTiler konnte nicht geladen werden:", err);
