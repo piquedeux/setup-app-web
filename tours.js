@@ -100,8 +100,8 @@ if (navigator.geolocation) {
 
   const spots = [];
   for (let i = 0; i < 200; i++) {
-    const lat = 52.4 + Math.random() * 0.4; // Berlin-Umgebung
-    const lng = 13.1 + Math.random() * 0.6;
+    const lat = 48.8975 + Math.random() * 0.4; // Berlin-Umgebung
+    const lng = 9.1916 + Math.random() * 0.6;
     const category = spotCategories[Math.floor(Math.random() * spotCategories.length)];
     const svgFileName = spotIconMap[category] || 'X.svg'; // Fallback to 'X.svg' if no specific icon
     spots.push({
@@ -138,14 +138,14 @@ if (navigator.geolocation) {
   ];
   const riderColors = ["red", "gold", "blue", "green", "purple", "orange", "brown", "pink", "teal", "black"];
   const riders = [
-    { id: 'Moritz', pos: [52.52, 13.4], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
-    { id: 'Anna', pos: [52.53, 13.35], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
-    { id: 'Tom', pos: [52.51, 13.38], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
+    { id: 'Moritz', pos: [48.8974, 9.1914], color: 'red', speed: 0.00015, dir: [0.00015, 0] },
+    { id: 'Anna', pos: [48.8973, 9.1915], color: 'gold', speed: 0.00012, dir: [0, 0.00012] },
+    { id: 'Tom', pos: [48.8976, 9.192], color: 'blue', speed: 0.0001, dir: [-0.0001, 0] }
   ];
   // 30 weitere Fahrer mit Zufallsdaten
   for (let i = 0; i < 30; i++) {
-    const lat = 52.4 + Math.random() * 0.4;
-    const lng = 13.1 + Math.random() * 0.6;
+    const lat = 48.8973 + Math.random() * 0.4;
+    const lng = 9.192 + Math.random() * 0.6;
     const color = riderColors[i % riderColors.length];
     const dir = directions[i % directions.length];
     riders.push({
@@ -185,7 +185,7 @@ if (navigator.geolocation) {
     riders.forEach(rider => {
       let { lat, lng } = rider.marker.getLatLng();
       lat += rider.speed;
-      if (lat > 52.8) lat = 52.4;
+      if (lat > 48.8974) lat = 48.9;
       rider.marker.setLatLng([lat, lng]);
     });
   }
