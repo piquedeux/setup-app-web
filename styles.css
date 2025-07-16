@@ -12,6 +12,8 @@ body {
   margin: 0;
   font-family: var(--font-secondary);
   display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
   height: 100vh;
   background-color: var(--color-bg);
