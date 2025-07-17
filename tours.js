@@ -739,7 +739,7 @@ setInterval(moveRiders, 700);
 
       entry.innerHTML = `
         <div class="author">
-          <a href="#" class="profile-link">${log.author}</a>
+          <a class="profile-link">${log.author}</a>
         </div>
         <div class="date">${dateStr}</div>
         ${contentHtml}
