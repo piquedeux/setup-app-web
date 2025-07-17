@@ -321,21 +321,21 @@ setInterval(moveRiders, 700);
     // Marker Start X
     currentRouteMarkers.push(
       L.marker(coords[0], {
-        icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
+        icon: L.divIcon({ className: '', html: '<span style="font-size: 18px;">X</span>', iconSize: [18, 18] })
       }).addTo(map).bindPopup("Start")
     );
 
     // Marker Ziel X
     currentRouteMarkers.push(
       L.marker(coords[coords.length - 1], {
-        icon: L.divIcon({ className: '', html: '<span style="font-size: 28px;">X</span>', iconSize: [28, 28] })
+        icon: L.divIcon({ className: '', html: '<span style="font-size: 18px;">X</span>', iconSize: [18, 18] })
       }).addTo(map).bindPopup("Ziel")
     );
 
     // Marker Zwischenstopps X
     waypoints.forEach((wp, i) => {
       L.marker(wp, {
-        icon: L.divIcon({ className: '', html: '<span style="font-size: 24px;">X</span>', iconSize: [24, 24] })
+        icon: L.divIcon({ className: '', html: '<span style="font-size: 18px;">Sleept</span>', iconSize: [24, 24] })
       }).addTo(map).bindPopup(`Zwischenstopp ${i + 1}`);
     });
 
