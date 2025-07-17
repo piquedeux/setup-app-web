@@ -497,35 +497,15 @@ main {
   border-radius: 50%;
 }
 
-/* Wrapper = Quadrat, für zentriertes Rotieren */
-.triangle-wrapper {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  transition: transform 0.3s ease;
-  transform-origin: center center;
-}
 
-/* Das eigentliche Dreieck */
-.triangle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 20px solid black;
-  transform: translate(-50%, -50%);
-}
 
 /* Dreieck & Raute rotieren beim Toggle */
 .settings-toggle:checked + .settings-btn .diamond {
   transform: rotate(135deg);
 }
 
-.settings-toggle:checked + .settings-btn .triangle-wrapper {
-  transform: rotate(90deg);
+.settings-toggle:checked + .settings-btn + .settings-menu {
+  display: flex;
 }
 
 .settings-menu {
