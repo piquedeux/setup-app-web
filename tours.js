@@ -207,7 +207,7 @@ const offenbachRiders = createRiders("Offenbach", 50.0, 8.5, 0.3, 0.5, [
     })
   }).addTo(map);
   rider.marker.on('click', () => {
-    const profileLink = `<a href="/profile.html?user=${encodeURIComponent(rider.id)}" class="profile-link" target="_blank">${rider.id}</a>`;
+    const profileLink = `<a  style="color: orange; text-decoration: none;">${rider.id}</a>`;
     rider.marker.bindPopup(`
       <b>${profileLink}</b><br>
       Geschwindigkeit: ${(rider.speed * 100000).toFixed(2)} km/h
